@@ -1,0 +1,77 @@
+body {
+	margin: 0;
+}
+
+div {
+	margin: 0;
+	border: 0;
+}
+
+.main-body {
+	height: 100%;
+	width: 100%;
+}
+
+.visual-box {
+	width: 70%;
+	min-height: 70vh;
+	background-color: gray;
+    position: relative;
+}
+
+.chat-window {
+	width: 29.5%;
+	min-height: 100vh;
+	background-color: green;
+	position: absolute;
+	top: 0;
+	left: 70%;
+	border-left: 0.5vw;
+	border-style: solid;
+}
+
+.menu-bar {
+	border-top: 0.5vh;
+	border-bottom: 0.5vh;
+	border-style: solid;
+	width: 70%;
+	height: 4vh;
+	min-height: 10px;
+	background-color: blue;
+}
+
+.chat-box {
+	width: 70%;
+	min-height: 25vh;
+	background-color: red;
+	position: relative;
+}
+
+.post-message {
+	position: absolute;
+	bottom: 2%;
+	right: 0.5%;
+	height: 50px;
+	width: 5%;
+}
+
+.chat-input{
+	padding: 0;
+	border: 0;
+	width: 90%;
+	height: 50px;
+	position: absolute;
+	bottom: 2%;
+	left: 0.5%;
+}
+
+#change-colour{
+
+}
+
+#whiteboard{
+    background-color: blue;
+    min-height: 100%;
+    min-height: 100%;
+    position: absolute;
+}
