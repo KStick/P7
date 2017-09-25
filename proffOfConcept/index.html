@@ -1,0 +1,93 @@
+<DOCTYPE html>
+<head>
+	<link rel="stylesheet" type="text/css" href="mockupCSS.css">
+	<link rel="stuffIdontKnow" type="text/php" href="Post.php">
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="fabric.js"></script>
+</head>
+
+
+<html>
+<body>
+    <script>
+	var session = prompt("Please enter Session name", "Session");
+	document.cookie = "SessionID = " + session;
+	$.post("Session.php", {id : session});
+    </script>
+
+    <script>
+	function getCookie(name) {
+ 	    var value = "; " + document.cookie;
+	    var parts = value.split("; " + name + "=");
+	    if (parts.length == 2) return parts.pop().split(";").shift();
+	}
+    </script>
+
+	
+
+
+
+	<div class = "main-body">
+		<div class="visual-box">
+            <canvas id = "whiteboard">
+                
+            </canvas>
+		</div>
+		<div class = "chat-window">
+			<p>This is some text</p>
+		</div>
+		<div class = "menu-bar">
+            <button id = "change-colour" onclick='colourSwap()'>
+                Change colour
+            </button>
+		</div>
+		<div class = "chat-box">
+			<input type = "text" class = "chat-input">
+			</input>
+			<button class = "post-message chat-page">
+				Send
+			</button>
+		</div>
+	</div>
+<script>
+	function saveWhiteboard() {
+		var ID = getCookie("SessionID");
+		var tmp = JSON.stringify(canvas.toJSON());
+		$.post("Post.php", {sessionID : ID, data : tmp});
+		console.log(tmp);
+	}
+</script>
+
+<script>
+	function loadWhiteboard() {
+		var ID = getCookie("SessionID");
+		$(function(){
+   			$.get( ID, function( data ) {
+				console.log(data);
+					canvas.loadFromJSON(data, function() {
+   			 		canvas.renderAll();
+				}); 
+   			});
+		});
+	}
+</script>
+
+<script>
+        var width = document.getElementById("whiteboard").offsetWidth;
+	var height = document.getElementById("whiteboard").offsetHeight;
+	var canvas = new fabric.Canvas("whiteboard" , {isDrawingMode: true});
+	canvas.setWidth(width);
+	canvas.setHeight(height);
+	
+	canvas.on('path:created', function(e){
+		saveWhiteboard();
+	});
+
+	setInterval(loadWhiteboard, 1000);
+	
+		
+</script>
+
+
+</body>
+</html>
