@@ -14,7 +14,6 @@ p {
 
 button {
     margin-left: 8px;
-    margin-top: 3px;
     vertical-align: middle;
 }
 
@@ -41,15 +40,16 @@ button {
 
 .menu-bar {
 	width: 70%;
-	height: 5vh;
+	height: 8vh;
 	min-height: 10px;
 	background-color: BFBD7E;
     border-radius: 4px 4px 15px 15px;
+    position: relative;
 }
 
 .chat-box {
 	width: 70%;
-	min-height: 25vh;
+	min-height: 22vh;
 	background-color: E1DFAF;
 	position: relative;
 }
@@ -73,7 +73,9 @@ button {
 }
 
 #change-colour{
-
+    top: 25%;
+    height: 50%;
+    position: absolute;
 }
 
 #whiteboard{
