@@ -9,7 +9,9 @@ div {
 }
 
 p {
-    padding-left: 5px;
+    margin-top: 0;
+    padding-left: 10px;
+    padding-top: 8px;
 }
 
 button {
@@ -32,10 +34,18 @@ button {
 .chat-window-container {
 	width: 30%;
 	min-height: 100vh;
-	background-color: 837D9B;
+	background-color: 645C84;
 	position: absolute;
 	top: 0;
 	left: 70%;
+}
+
+.chat-window {
+    margin: 2.5vh;
+    min-height: 95vh;
+    width: auto;
+    background-color: 837D9B;
+    box-shadow: 3px 3px 10px #A7A4B7;
 }
 
 .menu-bar {
@@ -43,14 +53,14 @@ button {
 	height: 8vh;
 	min-height: 10px;
 	background-color: BFBD7E;
-    border-radius: 4px 4px 15px 15px;
+    border-radius: 0 0 15px 15px;
     position: relative;
 }
 
 .chat-box {
 	width: 70%;
 	min-height: 22vh;
-	background-color: 837D9B;
+	background-color: 645C84;
 	position: relative;
 }
 
