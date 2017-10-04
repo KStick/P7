@@ -13,6 +13,9 @@
 	var session = prompt("Please enter Session name", "Session");
 	document.cookie = "SessionID = " + session;
 	$.post("Session.php", {id : session});
+
+	var user = prompt("Please enter username", "Username");
+	document.cookie = "Username = " + user;
     </script>
 
     <script>
@@ -37,34 +40,39 @@
 			<p>This is some text</p>
 		</div>
 		<div class = "menu-bar">
-            <button id = "drawingMode">
-				Cancel drawing mode
+            <button id = "change-colour" onclick='colourSwap()'>
+                Change colour
             </button>
-			<button id = "clear">
-				Clear
-			</button>
-			<select id="drawingModeSelector">
-				<option>Pencil</option>
-				<option>Circle</option>
-				<option>Spray</option>
-		    </select>
-			<span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawingLineWidth">
-		<input type="color" value="#005E7A" id="drawingColor"><br>
 		</div>
 		<div class = "chat-box">
-			<input type = "text" class = "chat-input">
+			<input type = "text" class = "chat-input" id="user-message">
 			</input>
-			<button class = "post-message chat-page">
+			<button class = "post-message chat-page" id="send-message">
 				Send
 			</button>
 		</div>
 	</div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$("#send-message").click(function(){
+			var clientmsg = $("#user-message").val();
+			var username = getCookie("Username");
+			$.post("chatlog.php", {username : username, text : clientmsg})
+			$("#user-message").attr("value", "");
+			return false;
+		});
+	})
+</script>
+
+
 <script>
 	function saveWhiteboard() {
 		var ID = getCookie("SessionID");
 		var tmp = JSON.stringify(canvas.toJSON());
-		console.log(tmp);
 		$.post("Post.php", {sessionID : ID, data : tmp});
+		console.log(tmp);
 	}
 </script>
 
@@ -73,6 +81,7 @@
 		var ID = getCookie("SessionID");
 		$(function(){
    			$.get( ID, function( data ) {
+				console.log(data);
 					canvas.loadFromJSON(data, function() {
    			 		canvas.renderAll();
 				}); 
@@ -82,65 +91,19 @@
 </script>
 
 <script>
-
-	var width = 0;
-	var height = 0;
-	var canvas;
-	$(document).ready(function(){
-		width = document.getElementById("whiteboard").offsetWidth;
-		height = document.getElementById("whiteboard").offsetHeight;
-		canvas = new fabric.Canvas("whiteboard" , {isDrawingMode: true});
-		canvas.setWidth(width);
-		canvas.setHeight(height);
-		canvas.freeDrawingBrush.color = drawingColor.value;		
-		loadWhiteboard();
-		
-		setInterval(loadWhiteboard, 1000);
-		canvas.on('path:created', function(e){
-			console.log("path created");	
-			saveWhiteboard();
-
-		});	
-
-	})
-	var drawingModeEL = document.getElementById("drawingMode"),
-		clearEL = document.getElementById("clear"),
-		drawingLineWidthEL = document.getElementById("drawingLineWidth"),
-		drawingColorEL = document.getElementById("drawingColor");
-
-	clearEL.onclick = function() { canvas.clear()}
+        var width = document.getElementById("whiteboard").offsetWidth;
+	var height = document.getElementById("whiteboard").offsetHeight;
+	var canvas = new fabric.Canvas("whiteboard" , {isDrawingMode: true});
+	canvas.setWidth(width);
+	canvas.setHeight(height);
 	
-	drawingModeEL.onclick = function() {
-		canvas.isDrawingMode = !canvas.isDrawingMode;
-		if(canvas.isDrawingMode){
-			drawingModeEL.innerHTML = "Cancel drawing mode";
-		}
-		else {
-			drawingModeEL.innerHTML = "Enter drawing mode";
-		}};
+	canvas.on('path:created', function(e){
+		saveWhiteboard();
+	});
 
-		
-	document.getElementById('drawingModeSelector').onchange = function() {
-		if(this.value === ""){
-			<!--here we can make custom brushes-->
-		}	
-		else {
-			canvas.freeDrawingBrush = new fabric[this.value + 'Brush'](canvas);
-		}
-		
-		canvas.freeDrawingBrush.color = drawingColor.value;
-		canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEL.value,10) || 1;
-	}
+	setInterval(loadWhiteboard, 1000);
 	
-	drawingLineWidthEL.onchange = function(){
-		canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
-		this.previousSibling.innerHTML= this.value;
-	}
-	drawingColor.onchange = function() {
-		canvas.freeDrawingBrush.color = this.value;
-	}
-
-
+		
 </script>
 
 
