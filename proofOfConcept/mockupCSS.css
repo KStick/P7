@@ -1,6 +1,6 @@
 body {
 	margin: 0;
-    background-color: E1DFAF;
+    background-color: 837D9B;
 }
 
 div {
@@ -29,10 +29,10 @@ button {
     position: relative;
 }
 
-.chat-window {
+.chat-window-container {
 	width: 30%;
 	min-height: 100vh;
-	background-color: E1DFAF;
+	background-color: 837D9B;
 	position: absolute;
 	top: 0;
 	left: 70%;
@@ -50,7 +50,7 @@ button {
 .chat-box {
 	width: 70%;
 	min-height: 22vh;
-	background-color: E1DFAF;
+	background-color: 837D9B;
 	position: relative;
 }
 
