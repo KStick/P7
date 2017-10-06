@@ -40,17 +40,17 @@
 			<p>This is some text</p>
 		</div>
 		<div class = "menu-bar">
-            <button id = "change-colour" onclick='colourSwap()'>
-+                Change colour
-            </button>
-	    <button id = "clear">
-		Clear
-	    </button>
-	    <select id="drawingModeSelector">
-		<option>Pencil</option>
-		<option>Circle</option>
-		<option>Spray</option>
-	    </select>
+            <button id = "drawingMode">
+               Cansel drawing mode 
+        	</button>
+	    	<button id = "clear">
+				Clear
+	    	</button>
+	    	<select id="drawingModeSelector">
+				<option>Pencil</option>
+				<option>Circle</option>
+				<option>Spray</option>
+	   		 </select>
 			<span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawingLineWidth">
 		<input type="color" value="#005E7A" id="drawingColor"><br>
 		</div>
@@ -68,6 +68,7 @@
 	function saveWhiteboard() {
 		var ID = getCookie("SessionID");
 		var tmp = JSON.stringify(canvas.toJSON());
+		console.log(tmp);
 		$.post("Post.php", {sessionID : ID, data : tmp});
 	}
 </script>
@@ -77,7 +78,7 @@
 		var ID = getCookie("SessionID");
 		$(function(){
    			$.get( ID, function( data ) {
-					canvas.loadFromJSON(data, function() {
+					canvas.loadFromJSON(decodeEntities(data), function() {
    			 		canvas.renderAll();
 				}); 
    			});
@@ -86,7 +87,15 @@
 </script>
 
 <script>
-        var width = 0;
+	function decodeEntities(encodedString) {
+    	var textArea = document.createElement('textarea');
+    	textArea.innerHTML = encodedString;
+    	return textArea.value;
+	}
+</script>
+
+<script>
+    var width = 0;
 	var height = 0;
 	var canvas;
 	$(document).ready(function(){

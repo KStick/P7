@@ -1,6 +1,6 @@
 <?php
 $myfile = fopen($_POST["sessionID"], "w");
-fwrite($myfile, $_POST['data']);
+fwrite($myfile, htmlspecialchars($_POST['data']));
 fclose($myfile);
 
 ?>
