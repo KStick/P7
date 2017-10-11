@@ -1,4 +1,4 @@
 <?php
-$file = fopen($_POST["id"], "w");
+$file = fopen(str_replace(".", "_",$_POST["id"]), "w");
 fclose($file);
 ?>
