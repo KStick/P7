@@ -1,6 +1,6 @@
 body {
 	margin: 0;
-    background-color: 837D9B;
+    background-color: 645C84;
 }
 
 div {
@@ -45,7 +45,8 @@ button {
     min-height: 95vh;
     width: auto;
     background-color: 837D9B;
-    box-shadow: 3px 3px 10px #A7A4B7;
+    box-shadow: 2px 2px 10px #A7A4B7;
+    border-radius: 5px 5px 5px 5px;
 }
 
 .menu-bar {
@@ -75,7 +76,7 @@ button {
 .chat-input{
 	padding: 0;
 	border: 0;
-	width: 90%;
+	width: 93%;
 	height: 2em;
 	position: absolute;
 	bottom: 2%;
