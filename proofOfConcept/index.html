@@ -43,7 +43,7 @@
 		</div>
 		<div class = "menu-bar">
             <button id = "drawingMode">
-               Cansel drawing mode 
+               Cancel drawing mode 
         	</button>
 	    	<button id = "clear">
 				Clear
@@ -123,7 +123,7 @@
 		$("#send-message").click(function(){
 			var clientmsg = $("#user-message").val();
 			var username = getCookie("Username");
-			$.post("chatlog.php", {username : username, text : clientmsg})
+			$.post("postchatlog.php", {username : username, text : clientmsg})
 			$("#user-message").val("", "");
 			return false;
 		});
@@ -178,7 +178,7 @@
 	function loadLog(){     
         var oldscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height before the request
         $.ajax({
-            url: "log.html",
+            url: "chatlog.html",
             cache: false,
             success: function(html){        
                 $("#chat-window").html(html); //Insert chat log into the #chatbox div   
