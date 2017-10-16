@@ -89,7 +89,7 @@
 	function loadWhiteboard() {
 		var ID = getCookie("SessionID");
 		$(function(){
-   			$.get( ID, function( data ) {
+   			$.get( "Sessions/".concat(ID), function( data ) {
 					canvas.loadFromJSON(decodeEntities(data), function() {
    			 		canvas.renderAll();
 				}); 
