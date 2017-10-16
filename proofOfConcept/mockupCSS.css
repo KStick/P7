@@ -119,6 +119,18 @@ button {
     margin-right: 0;
 }
 
+.form-holder{
+    text-align: left !important;
+    min-width: 100%;
+    margin-left: 5px;
+}
+
+.question-input-field{
+    width: 80%;
+    height: 20%;
+    word-break: break-all;
+}
+
 #change-colour{
     top: 25%;
     height: 50%;
