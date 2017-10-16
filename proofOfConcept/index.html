@@ -8,8 +8,17 @@
 
 
 <html>
-<body>
+
+<script type="text/javascript">
+	function deleteAllCookies() {
+		document.cookie = "Username " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		document.cookie = "SessionID " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	}
+</script>>
+
+<body onunload="deleteAllCookies()">
     <script>
+    deleteAllCookies();
 	var session = prompt("Please enter Session name", "Session");
 	document.cookie = "SessionID = " + session;
 	$.post("Session.php", {id : session});
@@ -36,6 +45,7 @@
                 
             </canvas>
 		</div>
+
 		<div class = "chat-window-container">
 			<div class = "chat-window" id="chat-window">
                 
@@ -56,6 +66,7 @@
 			<span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawingLineWidth">
 		<input type="color" value="#005E7A" id="drawingColor"><br>
 		</div>
+		
 		<div class = "chat-box">
 			<input type = "text" class = "chat-input" id="user-message">
 			</input>
@@ -64,8 +75,7 @@
 			</button>
 		</div>
 	</div>
-
-
+	
 <script>
 	function saveWhiteboard() {
 		var ID = getCookie("SessionID");
@@ -174,8 +184,12 @@
 		canvas.freeDrawingBrush.color = this.value;
 	}
 
+
+</script>
+<script type="text/javascript">
+
 	//Loads the log to write the chat. This function is called at an interval
-	function loadLog(){     
+	 function loadLog(){
         var oldscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height before the request
         $.ajax({
             url: "chatlog.html",
@@ -190,9 +204,7 @@
                 }               
             },
         });
-    }
+    }	
 </script>
-
-
 </body>
 </html>
