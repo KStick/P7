@@ -1,4 +1,6 @@
 <?php
-$file = fopen($_POST["id"], "w");
-fclose($file);
+if(is_numeric($_POST["sessionID"])){
+	$file = fopen($_POST["id"], "w");
+	fclose($file);
+}
 ?>
