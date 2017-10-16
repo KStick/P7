@@ -152,7 +152,10 @@
 		drawingLineWidthEL = document.getElementById("drawingLineWidth"),
 		drawingColorEL = document.getElementById("drawingColor");
 
-	clearEL.onclick = function() { canvas.clear()}
+	clearEL.onclick = function() { 
+		canvas.clear();
+		saveWhiteboard();
+	}
 	
 	drawingModeEL.onclick = function() {
 		canvas.isDrawingMode = !canvas.isDrawingMode;
