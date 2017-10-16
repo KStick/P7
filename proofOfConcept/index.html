@@ -112,6 +112,8 @@
 	var canvas;
 	$(document).ready(function(){
 
+		window.onload = userJoinsChat();
+		window.addEventListener("unload", userLeavesChat);
 		// whiteboard functions
 		width = document.getElementById("whiteboard").offsetWidth;
 		height = document.getElementById("whiteboard").offsetHeight;
@@ -133,7 +135,8 @@
 		$("#send-message").click(function(){
 			var clientmsg = $("#user-message").val();
 			var username = getCookie("Username");
-			$.post("postchatlog.php", {username : username, text : clientmsg})
+			var sessionID = getCookie("SessionID");
+			$.post("postchatlog.php", {username : username, text : clientmsg, sessionID : sessionID});
 			$("#user-message").val("", "");
 			return false;
 		});
@@ -194,8 +197,11 @@
 	//Loads the log to write the chat. This function is called at an interval
 	 function loadLog(){
         var oldscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height before the request
+        var sessionID = getCookie("SessionID");
+        var path = "SessionsChatlogs/" + sessionID + ".html";
+        console.log(path);
         $.ajax({
-            url: "chatlog.html",
+            url: path,
             cache: false,
             success: function(html){        
                 $("#chat-window").html(html); //Insert chat log into the #chatbox div   
@@ -208,6 +214,24 @@
             },
         });
     }	
+</script>
+<script type="text/javascript">
+	function userJoinsChat() {
+
+		var username = getCookie("Username");
+		var sessionID = getCookie("SessionID");
+		var clientmsg = username + " has joined the chat!";
+		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
+	}
+</script>
+
+<script type="text/javascript">
+	function userLeavesChat() {
+		var username = getCookie("Username");
+		var sessionID = getCookie("SessionID");
+		var clientmsg = username + " has left the chat!";
+		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
+	}
 </script>
 </body>
 </html>
