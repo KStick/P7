@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 
 import psycopg2
 
@@ -38,3 +39,27 @@ def getQuestion(id):
 	cur.close()
 	conn.close()
 	return str(returnData)
+
+@app.route('/insertQuestion', methods = ['POST'])
+def insertQuestion():
+	
+	#format user:subject:question
+	
+	data = request.form
+	username = data['username']
+	subject = data['subject']
+	question = data['question']
+	conn = connect()
+	cur = conn.cursor()
+	
+	query = "SELECT id FROM users WHERE username = '" + str(username) + "';"
+	cur.execute(query)
+	userid = cur.fetchone() [0]
+	
+	query = "INSERT INTO questions(username, subject, question)" + " VALUES(" + str(userid) + ",'" + str(subject) + "','" + str(question) + "') RETURNING id;"
+	cur.execute(query)
+	sessionID = cur.fetchone()[0]
+	conn.commit()
+	cur.close()
+	conn.close()
+	return str(sessionID)
