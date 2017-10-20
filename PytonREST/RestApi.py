@@ -6,14 +6,14 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
 app = Flask(__name__)
 CORS(app)
 
-@app.cli.command()
+@app.cli.command("initdb")
 def initdb():
 	conn = connect()
 	cur = conn.cursor()
@@ -29,7 +29,7 @@ def initdb():
 	cur.close()
 	conn.close()
 
-@app.cli.command()
+@app.cli.command("seedData")
 def seedData():
 	conn = connect()
 	cur = conn.cursor()
@@ -92,8 +92,7 @@ def insertQuestion():
 	question = data['question']
 	conn = connect()
 	cur = conn.cursor()
-	cur.execute(query)
-	query = "INSERT INTO questions(username, subject, question)" + " VALUES(" + str(username) + ",'" + str(subject) + "','" + str(question) + "') RETURNING id;"
+	query = "INSERT INTO questions(username, subject, question) VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "') RETURNING id;"
 	cur.execute(query)
 	sessionID = cur.fetchone()[0]
 	conn.commit()

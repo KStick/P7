@@ -18,13 +18,8 @@
 
 <body onunload="deleteAllCookies()">
     <script>
-    deleteAllCookies();
-	var session = prompt("Please enter Session name", "Session");
-	document.cookie = "SessionID = " + session;
+	var session = getCookie("SessionID")
 	$.post("Session.php", {id : session});
-
-	var user = prompt("Please enter username", "Username");
-	document.cookie = "Username = " + user;
     </script>
 
     <script>
