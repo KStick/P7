@@ -6,7 +6,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
@@ -22,7 +22,7 @@ def initdb():
 	except Exception as e:
 		pass
 	try:
-		cur.execute("""CREATE TABLE questions(id serial PRIMARY KEY, username INTEGER REFERENCES users(id) , subject TEXT NOT NULL  ,question TEXT NOT NULL, date_time TIMESTAMP WITH TIME ZONE NOT NULL default CURRENT_TIMESTAMP); """)
+		cur.execute("""CREATE TABLE questions(id serial PRIMARY KEY, username TEXT NOT NULL REFERENCES users(username) , subject TEXT NOT NULL  ,question TEXT NOT NULL, date_time TIMESTAMP WITH TIME ZONE NOT NULL default CURRENT_TIMESTAMP); """)
 	except Exception as e:
 		pass
 	conn.commit()
@@ -92,12 +92,8 @@ def insertQuestion():
 	question = data['question']
 	conn = connect()
 	cur = conn.cursor()
-	
-	query = "SELECT id FROM users WHERE username = '" + str(username) + "';"
 	cur.execute(query)
-	userid = cur.fetchone() [0]
-	
-	query = "INSERT INTO questions(username, subject, question)" + " VALUES(" + str(userid) + ",'" + str(subject) + "','" + str(question) + "') RETURNING id;"
+	query = "INSERT INTO questions(username, subject, question)" + " VALUES(" + str(username) + ",'" + str(subject) + "','" + str(question) + "') RETURNING id;"
 	cur.execute(query)
 	sessionID = cur.fetchone()[0]
 	conn.commit()
