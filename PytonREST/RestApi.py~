@@ -6,7 +6,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
@@ -22,15 +22,7 @@ def initdb():
 	except Exception as e:
 		pass
 	try:
-		cur.execute("""CREATE TABLE questions(id serial PRIMARY KEY, username TEXT NOT NULL REFERENCES users(username) , subject TEXT NOT NULL  ,question TEXT NOT NULL, date_time TIMESTAMP WITH TIME ZONE NOT NULL default CURRENT_TIMESTAMP); """)
-	except Exception as e:
-		pass
-	try:
-		cur.execute("""CREATE TABLE roles(id serial PRIMARY KEY, role TEXT UNIQUE NOT NULL); """)
-	except Exception as e:
-		pass
-	try:
-		cur.execute("""CREATE TABLE user_roles(id serial PRIMARY KEY, username TEXT NOT NULL REFERENCES users(username), role TEXT REFERENCES roles(role));""")
+		cur.execute("""CREATE TABLE questions(id serial PRIMARY KEY, username INTEGER REFERENCES users(id) , subject TEXT NOT NULL  ,question TEXT NOT NULL, date_time TIMESTAMP WITH TIME ZONE NOT NULL default CURRENT_TIMESTAMP); """)
 	except Exception as e:
 		pass
 	conn.commit()
@@ -55,11 +47,6 @@ def seedData():
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('Joseph','123','123@a123.com');""")
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('Megaman','123','123@a123.com');""")
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('Trent','123','123@a123.com');""")
-	cur.execute("""INSERT INTO roles(role) VALUES('student');""")
-	cur.execute("""INSERT INTO roles(role) VALUES('math_teacher');""")
-	cur.execute("""INSERT INTO roles(role) VALUES('professor');""")
-	cur.execute("""INSERT INTO roles(role) VALUES('high_school_teacher');""")
-	cur.execute("""INSERT INTO roles(role) VALUES('toddler');""")
 	conn.commit()
 	cur.close()
 	conn.close()
@@ -104,26 +91,16 @@ def insertQuestion():
 	subject = data['subject']
 	question = data['question']
 	conn = connect()
-	query = "INSERT INTO questions(username, subject, question)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "') RETURNING id;"
+	cur = conn.cursor()
+	
+	query = "SELECT id FROM users WHERE username = '" + str(username) + "';"
+	cur.execute(query)
+	userid = cur.fetchone() [0]
+	
+	query = "INSERT INTO questions(username, subject, question)" + " VALUES(" + str(userid) + ",'" + str(subject) + "','" + str(question) + "') RETURNING id;"
 	cur.execute(query)
 	sessionID = cur.fetchone()[0]
 	conn.commit()
 	cur.close()
 	conn.close()
 	return str(sessionID)
-
-@app.route('/InsertRole', methods = ['POST'])
-def insertRole():
-
-	#format user:role
-
-	data = request.form
-	username = data['username']
-	role = data['role']
-	conn = connect()
-	cur = conn.cursor()
-	query = "INSERT INTO roles(username, role) " + "VALUES ('" + str(username) +"','" + str(role) + "');"
-	cur.execute(query)
-	conn.commit()
-	cur.close()
-	conn.close()
