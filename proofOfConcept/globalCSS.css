@@ -1,0 +1,33 @@
+body {
+	margin: 0;
+    background-color: 645C84;
+}
+
+div {
+	margin: 0;
+	border: 0;
+}
+
+p {
+    margin-top: 0;
+    padding-left: 10px;
+    padding-top: 8px;
+}
+
+button {
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.main-body {
+	height: 100%;
+	width: 100%;
+}
+
+.top-banner{
+    position: relative;
+    text-align: center;
+    height: 9%;
+    background-color: BFBD7E;
+    margin-bottom: 1%;
+}
