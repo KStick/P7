@@ -30,7 +30,7 @@ def initdb():
 	except Exception as e:
 		pass
 	try:
-		cur.execute("""CREATE TABLE user_roles(id serial PRIMARY KEY, username TEXT NOT NULL REFERENCES users(username), role TEXT REFERENCES roles(role));""")
+		cur.execute("""CREATE TABLE user_roles(id serial PRIMARY KEY, username TEXT NOT NULL UNIQUE REFERENCES users(username), role TEXT REFERENCES roles(role));""")
 	except Exception as e:
 		pass
 	conn.commit()
