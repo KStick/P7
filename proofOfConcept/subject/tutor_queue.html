@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<head>
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script> 
+  <link rel="stylesheet" type="text/css" href="mystyle.css">
+</head>
+
+<html>
+<body>
+
+
+  <table id="table">
+    <thead>
+      <tr id="rows" onclick='alert(document.getElementById("table").rows[0].cells.item(0).innerHTML)'>
+        <th>subject</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Submitted</th>
+      </tr>
+    </thead>
+  </table>
+
+</body>
+</html>
+
+<script type="text/javascript">
+  
+$(document).ready(function() {     
+        $.ajax({
+            url: "log.txt",
+            cache: false,
+            success: function(text){         
+               var stringsplit = text.split("_");
+               printQueue(stringsplit);
+            },
+            error: function(text) {
+              
+            },
+        });
+    });
+
+function printQueue(text) {
+          var contentToPrint;
+          var tableHTML;
+          for (var i = 0; i < text.length-1; i++) {
+            console.log(i);
+            if (i%4==0) {
+              tableHTML = "<tr onclick='alert(" + i/4 + ")'>";
+              for (var j = i; j <= i+3; j++) {
+                tableHTML += "<td> " + text[j] + " </td>" ;
+              }
+              tableHTML += "</tr>";
+              document.getElementById("table").innerHTML += tableHTML;
+            }
+          }
+        }
+
+</script>  

@@ -1,8 +1,8 @@
 <DOCTYPE html>
 <head>
-	<link rel="stylesheet" type="text/css" href="mockupCSS.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="//twemoji.maxcdn.com/2/twemoji.min.js?2.3.0"></script>
+    <link rel="stylesheet" type="text/css" href="globalCSS.css">
 	<script src="fabric.js"></script>
 </head>
 
@@ -18,17 +18,8 @@
 </script>>
 
 <body onunload="deleteAllCookies()">
-    <script>
-    deleteAllCookies();
-	var session = prompt("Please enter Session name", "Session");
-	document.cookie = "SessionID = " + session;
-	$.post("Session.php", {id : session});
-
-	var user = prompt("Please enter username", "Username");
-	document.cookie = "Username = " + user;
-    </script>
-
-    <script>
+ 
+   <script>
 	function getCookie(name) {
  	    var value = "; " + document.cookie;
 	    var parts = value.split("; " + name + "=");
@@ -36,7 +27,12 @@
 	}
     </script>
 
-	
+   <script>
+	var session = getCookie("SessionID");
+	$.post("Session.php", {id : session});
+    </script>
+
+ 	
 
 
 

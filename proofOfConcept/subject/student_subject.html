@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="mystyle.css">
+</head>
+<body>
+
+<h3>Submission form</h3>
+
+<div class="container">
+  <form>
+    <label>Subject</label>
+    <select id="subject" name="subject">
+      <option value="math">Math</option>
+      <option value="biology">Biology</option>
+      <option value="software">Software</option>
+    </select>
+
+    <label>Question</label>
+    <textarea id="question" name="question" placeholder="Write question.." style="height:200px"></textarea>
+
+    <input type="submit" value="Submit" id="submit-button">
+  </form>
+</div>
+
+<script>
+	$(document).ready(function(){
+    var uname = prompt("Please enter username", "Username");
+	var id = 0;
+		$("#submit-button").click(function(){
+			$.ajax({data:{username : uname, subject : $("#subject").val(), question : $("#question").val()},
+				type:"POST",
+				url:'http://localhost:5000/insertQuestion',
+				headers: {
+					'Access-Control-Allow-Origin': '*'
+                },
+				success: function(response) {
+					document.cookie="SessionID = " + response + ";path=/";
+					document.cookie="Username = " + uname + ";path=/" 
+					window.location.href = "../"
+	
+				},
+				error: function(error){
+					console.log(error);
+				}
+            })
+		return false;
+		});
+	})
+</script>
+
+</body>
+</html>

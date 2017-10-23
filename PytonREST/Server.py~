@@ -7,7 +7,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='sivash' user='sivash' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 
@@ -81,7 +81,7 @@ def getQuestion(id):
 	conn.close()
 
 
-#CreateTables()
-#SeedData()
-#insertQuestion("henry","Math","What is some math question i hope nobody is going to read this as i dont know what i am doing")
+CreateTables()
+SeedData()
+insertQuestion("henry","Math","What is some math question i hope nobody is going to read this as i dont know what i am doing")
 getQuestion(1)
