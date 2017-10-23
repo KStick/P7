@@ -99,11 +99,12 @@ def insertQuestion():
 	
 	#format user:subject:question
 	
+	conn = connect()
+	cur = conn.cursor()
 	data = request.form
 	username = data['username']
 	subject = data['subject']
 	question = data['question']
-	conn = connect()
 	query = "INSERT INTO questions(username, subject, question)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "') RETURNING id;"
 	cur.execute(query)
 	sessionID = cur.fetchone()[0]
@@ -117,11 +118,11 @@ def insertRole():
 
 	#format user:role
 
+	conn = connect()
+	cur = conn.cursor()
 	data = request.form
 	username = data['username']
 	role = data['role']
-	conn = connect()
-	cur = conn.cursor()
 	query = "INSERT INTO roles(username, role) " + "VALUES ('" + str(username) +"','" + str(role) + "');"
 	cur.execute(query)
 	conn.commit()
