@@ -1,0 +1,13 @@
+.login-form{
+    margin-left: 35%;
+    width: 30%;
+    background-color: 837D9B;
+}
+
+.form-header-holder{
+    text-align: center;
+}
+
+.form-input-holder input{
+    margin-left: 10px;
+}
