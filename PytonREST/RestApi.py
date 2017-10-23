@@ -13,7 +13,7 @@ def connect():
 app = Flask(__name__)
 CORS(app)
 
-@app.cli.command()
+@app.cli.command("initdb")
 def initdb():
 	conn = connect()
 	cur = conn.cursor()
@@ -37,7 +37,7 @@ def initdb():
 	cur.close()
 	conn.close()
 
-@app.cli.command()
+@app.cli.command("seedData")
 def seedData():
 	conn = connect()
 	cur = conn.cursor()
@@ -99,12 +99,13 @@ def insertQuestion():
 	
 	#format user:subject:question
 	
-	conn = connect()
-	cur = conn.cursor()
 	data = request.form
 	username = data['username']
 	subject = data['subject']
 	question = data['question']
+
+	conn = connect()
+	cur = conn.cursor()
 	query = "INSERT INTO questions(username, subject, question)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "') RETURNING id;"
 	cur.execute(query)
 	sessionID = cur.fetchone()[0]
@@ -118,11 +119,12 @@ def insertRole():
 
 	#format user:role
 
-	conn = connect()
-	cur = conn.cursor()
 	data = request.form
 	username = data['username']
 	role = data['role']
+
+	conn = connect()
+	cur = conn.cursor()
 	query = "INSERT INTO roles(username, role) " + "VALUES ('" + str(username) +"','" + str(role) + "');"
 	cur.execute(query)
 	conn.commit()

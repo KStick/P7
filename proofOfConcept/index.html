@@ -18,12 +18,8 @@
 </script>>
 
 <body onunload="deleteAllCookies()">
-    <script>
-	var session = getCookie("SessionID")
-	$.post("Session.php", {id : session});
-    </script>
-
-    <script>
+ 
+   <script>
 	function getCookie(name) {
  	    var value = "; " + document.cookie;
 	    var parts = value.split("; " + name + "=");
@@ -31,7 +27,12 @@
 	}
     </script>
 
-	
+   <script>
+	var session = getCookie("SessionID");
+	$.post("Session.php", {id : session});
+    </script>
+
+ 	
 
 
 
