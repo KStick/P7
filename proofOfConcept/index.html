@@ -1,13 +1,14 @@
 <DOCTYPE html>
 <head>
 	<link rel="stylesheet" type="text/css" href="mockupCSS.css">
-	<link rel="stuffIdontKnow" type="text/php" href="Post.php">
-	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="//twemoji.maxcdn.com/2/twemoji.min.js?2.3.0"></script>
 	<script src="fabric.js"></script>
 </head>
 
 
 <html>
+
 
 <script type="text/javascript">
 	function deleteAllCookies() {
@@ -48,9 +49,10 @@
 
 		<div class = "chat-window-container">
 			<div class = "chat-window" id="chat-window">
-                
-            </div>
+		                		
+			</div>
 		</div>
+
 		<div class = "menu-bar">
             <button id = "drawingMode">
                Cancel drawing mode 
@@ -68,7 +70,7 @@
 		</div>
 		
 		<div class = "chat-box">
-			<input type = "text" class = "chat-input" id="user-message">
+			<input type="text" class = "chat-input" id="user-message"></textarea>
 			</input>
 			<button class = "post-message chat-page" id="send-message">
 				Send
@@ -133,11 +135,12 @@
 		// chat functions
 
 		$("#send-message").click(function(){
-			var clientmsg = $("#user-message").val();
+			var clientmsg = document.getElementById("user-message").value;
 			var username = getCookie("Username");
+			clientmsg = checkStandardEmojis(clientmsg);
 			var sessionID = getCookie("SessionID");
 			$.post("postchatlog.php", {username : username, text : clientmsg, sessionID : sessionID});
-			$("#user-message").val("", "");
+			$('#user-message').val("", "");
 			return false;
 		});
 
@@ -148,6 +151,8 @@
 				$("#send-message").click();
 			}
 		});
+
+
 
 	})
 	var drawingModeEL = document.getElementById("drawingMode"),
@@ -192,10 +197,16 @@
 
 
 </script>
+
+
+
 <script type="text/javascript">
+
+
 
 	//Loads the log to write the chat. This function is called at an interval
 	 function loadLog(){
+	 	twemoji.size = '72x72';
         var oldscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height before the request
         var sessionID = getCookie("SessionID");
         var path = "SessionsChatlogs/" + sessionID + ".html";
@@ -203,8 +214,9 @@
         $.ajax({
             url: path,
             cache: false,
-            success: function(html){        
-                $("#chat-window").html(html); //Insert chat log into the #chatbox div   
+            success: function(html){
+
+                $("#chat-window").html(twemoji.parse(decodeEntities(html))); //Insert chat log into the #chatbox div   
                 
                 //Auto-scroll           
                 var newscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height after the request
@@ -213,8 +225,12 @@
                 }               
             },
         });
+
+  
     }	
 </script>
+
+
 <script type="text/javascript">
 	function userJoinsChat() {
 
@@ -233,5 +249,15 @@
 		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
 </script>
+
+<script type="text/javascript">
+	function checkStandardEmojis(usermsg) {		
+		usermsg = usermsg.replace(':D', '&#x1f603;');
+		usermsg = usermsg.replace(';)', '😑');
+		return usermsg;	
+	}
+</script>
+
+
 </body>
 </html>
