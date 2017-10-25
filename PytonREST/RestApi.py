@@ -7,7 +7,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
@@ -96,7 +96,7 @@ def getQuestion(id):
 	return str(returnData)
 
 @app.route('/Questions', methods = ['GET', 'POST'])
-def insertQuestion():
+def Questions():
 	
 	#format user:subject:question
 	if request.method == "POST":
@@ -120,8 +120,8 @@ def insertQuestion():
 		query = "SELECT * FROM questions WHERE answered = false"
 		cur.execute(query)
 		question = cur.fetchall()
-		pattern = r"datatime.datetime\((\d)\,(\d)\,(\d)\,(\d)\,(\d)\,(\d)\)"
-		return re.sub(pattern=pattern, repl="\\1\\2\\3\\4\\5\\6", string=str(question))
+		pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"
+		return re.sub(pattern=pattern, repl="\\1 \\2 \\3 \\4 \\5 \\6", string=str(question))
 		conn.commit()
 		cur.close()
 		conn.close()
