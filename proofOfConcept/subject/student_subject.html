@@ -31,7 +31,7 @@
 		$("#submit-button").click(function(){
 			$.ajax({data:{username : uname, subject : $("#subject").val(), question : $("#question").val()},
 				type:"POST",
-				url:'http://localhost:5000/insertQuestion',
+				url:'http://localhost:5000/Questions',
 				headers: {
 					'Access-Control-Allow-Origin': '*'
                 },

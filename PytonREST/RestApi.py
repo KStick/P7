@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
+import re
 
 import psycopg2
 
@@ -22,7 +23,7 @@ def initdb():
 	except Exception as e:
 		pass
 	try:
-		cur.execute("""CREATE TABLE questions(id serial PRIMARY KEY, username TEXT NOT NULL REFERENCES users(username) , subject TEXT NOT NULL  ,question TEXT NOT NULL, date_time TIMESTAMP WITH TIME ZONE NOT NULL default CURRENT_TIMESTAMP); """)
+		cur.execute("""CREATE TABLE questions(id serial PRIMARY KEY, username TEXT NOT NULL REFERENCES users(username) , subject TEXT NOT NULL  ,question TEXT NOT NULL, date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP::TIMESTAMP(0), answered BOOLEAN DEFAULT false); """)
 	except Exception as e:
 		pass
 	try:
@@ -94,25 +95,40 @@ def getQuestion(id):
 	conn.close()
 	return str(returnData)
 
-@app.route('/insertQuestion', methods = ['POST'])
+@app.route('/Questions', methods = ['GET', 'POST'])
 def insertQuestion():
 	
 	#format user:subject:question
-	
-	data = request.form
-	username = data['username']
-	subject = data['subject']
-	question = data['question']
+	if request.method == "POST":
+		data = request.form
+		username = data['username']
+		subject = data['subject']
+		question = data['question']
+		conn = connect()
+		cur = conn.cursor()
+		query = "INSERT INTO questions(username, subject, question)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "') RETURNING id;"
+		cur.execute(query)
+		sessionID = cur.fetchone()[0]
+		conn.commit()
+		cur.close()
+		conn.close()
+		return str(sessionID)
 
-	conn = connect()
-	cur = conn.cursor()
-	query = "INSERT INTO questions(username, subject, question)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "') RETURNING id;"
-	cur.execute(query)
-	sessionID = cur.fetchone()[0]
-	conn.commit()
-	cur.close()
-	conn.close()
-	return str(sessionID)
+	elif request.method == "GET":
+		conn = connect()
+		cur = conn.cursor()
+		query = "SELECT * FROM questions WHERE answered = false"
+		cur.execute(query)
+		question = cur.fetchall()
+		pattern = r"datatime.datetime\((\d)\,(\d)\,(\d)\,(\d)\,(\d)\,(\d)\)"
+		return re.sub(pattern=pattern, repl="\\1\\2\\3\\4\\5\\6", string=str(question))
+		conn.commit()
+		cur.close()
+		conn.close()
+		return str(question)
+
+	else:
+		return "What are you trying to do?"
 
 @app.route('/InsertRole', methods = ['POST'])
 def insertRole():
