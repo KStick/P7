@@ -7,7 +7,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
@@ -129,6 +129,20 @@ def Questions():
 
 	else:
 		return "What are you trying to do?"
+
+@app.route('/QuestionAnswered', methods = ["POST"])
+def QuestionAnswered():
+	data = request.form
+	sessionid = data['id']
+	conn = connect()
+	cur = conn.cursor()
+	query = "UPDATE questions SET answered = true WHERE id = " + str(sessionid) + ";"
+	cur.execute(query)
+	conn.commit()
+	cur.close()
+	conn.close()
+	return "what are you doing here"
+	
 
 @app.route('/InsertRole', methods = ['POST'])
 def insertRole():
