@@ -3,6 +3,7 @@
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	export FLASK_APP=RestApi.py
 	flask initdb
+	flask seedData
 	flask run
 elif [[ "$OSTYPE" == "win32" ]]; then
 	bash -c "set FLASK_APP=RestApi.py"

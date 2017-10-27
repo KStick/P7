@@ -7,7 +7,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
@@ -31,7 +31,7 @@ def initdb():
 	except Exception as e:
 		pass
 	try:
-		cur.execute("""CREATE TABLE user_roles(id serial PRIMARY KEY, username TEXT NOT NULL UNIQUE REFERENCES users(username), role TEXT REFERENCES roles(role));""")
+		cur.execute("""CREATE TABLE user_roles(username TEXT NOT NULL UNIQUE REFERENCES users(username), role TEXT REFERENCES roles(role));""")
 	except Exception as e:
 		pass
 	conn.commit()
@@ -58,9 +58,12 @@ def seedData():
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('Trent','123','123@a123.com');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('student');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('math_teacher');""")
+	cur.execute("""INSERT INTO roles(role) VALUES('tutor');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('professor');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('high_school_teacher');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('toddler');""")
+	cur.execute("""INSERT INTO user_roles(username,role) VALUES('henry','student');""")
+	cur.execute("""INSERT INTO user_roles(username,role) VALUES('Finn','tutor');""")
 	conn.commit()
 	cur.close()
 	conn.close()
@@ -158,5 +161,21 @@ def insertRole():
 	query = "INSERT INTO roles(username, role) " + "VALUES ('" + str(username) +"','" + str(role) + "');"
 	cur.execute(query)
 	conn.commit()
+	cur.close()
+	conn.close()
+
+@app.route('/validateLogin', methods = {'POST'})
+def validateLogin():
+	#SELECT role FROM users,user_roles WHERE users.username = user_roles.username;
+
+	data = request.form
+	username = data['username']
+	role = data['role']
+
+	conn = connect()
+	cur = conn.cursor()
+	query = "SELECT role FROM users, user_roles WHERE users.username ='" + str(username) + "' " + "AND users.password = '" + str(password) + "';"
+	cur.execute(query)
+	conn.commit
 	cur.close()
 	conn.close()
