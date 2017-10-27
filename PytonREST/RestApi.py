@@ -7,7 +7,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
