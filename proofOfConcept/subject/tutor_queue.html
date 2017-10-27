@@ -25,46 +25,56 @@
 <script type="text/javascript">
   
 $(document).ready(function() {     
-        $.ajax({
-            url: 'http://localhost:5000/Questions',
-            cache: false,
-            success: function(text){         
+  $.ajax({
+    url: 'http://localhost:5000/Questions',
+    cache: false,
+    success: function(text){         
                var stringsplit = text.split(",");
                printQueue(stringsplit);
-            },
-            error: function(text) {
-              
-            },
-        });
-    });
+             },
+    error: function(text) {},
+  });
+});
 
 function printQueue(text) {
-          var contentToPrint;
-          var tableHTML;
-          for (var i = 0; i < text.length-1; i++) {
-
-            if (i%6==0) {
-              tableHTML = "<tr onclick='goToSession(" + Number(text[i].replace(/[[(\s]/g, '')) + ")'>";
-              for (var j = i; j < i+6; j++) {
-                if(j%6==0 || j%6==5){/*do nothing*/}
-                else if(j%6==1 || j%6==2){
-                  tableHTML += "<td> " + text[j].replace(/(['])/g, ''); + " </td>" ;
-                }
-                else{
-                  tableHTML += "<td> " + text[j] + " </td>" ;
-                }
-              }
-              tableHTML += "</tr>";
-              document.getElementById("table").innerHTML += tableHTML;
-            }
-          }
+  var contentToPrint;
+  var tableHTML;
+  for (var i = 0; i < text.length-1; i++) {
+    if (i%6==0) {
+      tableHTML = "<tr onclick='goToSession(" + Number(text[i].replace(/[[(\s]/g, '')) + ")'>";
+      for (var j = i; j < i+6; j++) {
+        if(j%6==0 || j%6==5){/*do nothing*/}
+        else if(j%6==1 || j%6==2){
+          tableHTML += "<td> " + text[j].replace(/(['])/g, ''); + " </td>" ;
         }
+        else{
+          tableHTML += "<td> " + text[j] + " </td>" ;
+        }
+      }
+      tableHTML += "</tr>";
+      document.getElementById("table").innerHTML += tableHTML;
+    }
+  }
+}
 
 function goToSession(sessionID) {
-          document.cookie="SessionID = " + sessionID + ";path=/";
-          document.cookie="Username = Finn;path=/" 
-          window.location.href = "../"
-  
-        }
+  var uname = prompt("Please enter username", "Username");
+  $.ajax({
+    data:{id : sessionID},
+    type:"POST",
+    url:'http://localhost:5000/QuestionAnswered',
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
+    success: function(response) {
+      document.cookie="SessionID = " + sessionID + ";path=/";
+      document.cookie="Username = "+ uname + ";path=/" 
+      window.location.href = "../"
+    },
+    error: function(error){
+      console.log(error);
+    }
+  })
+}
 
 </script>  
