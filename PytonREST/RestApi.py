@@ -170,12 +170,17 @@ def validateLogin():
 
 	data = request.form
 	username = data['username']
-	role = data['role']
+	password = data['password']
 
 	conn = connect()
 	cur = conn.cursor()
 	query = "SELECT role FROM users NATURAL JOIN user_roles WHERE users.username ='" + str(username) + "' " + "AND users.password = '" + str(password) + "';"
 	cur.execute(query)
+	role = cur.fetchone();
 	conn.commit
 	cur.close()
 	conn.close()
+	if role != None:
+		return role[0]
+	else:
+		return "NULL"

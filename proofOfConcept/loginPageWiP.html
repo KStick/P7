@@ -17,7 +17,7 @@
                 <h3>Login</h3>
             </div>
             <div class = "form-input-holder">
-                <form onsubmit="validateLogin(loginName.value, password.value);" autocomplete="on">
+                <form onsubmit="validateLogin(loginName.value, password.value); return false;" autocomplete="on">
                     <p>Account name</p>
                     <input type = "text" placeholder="Insert username..." id="loginName" autofocus required>
                     <p>Password</p>
@@ -37,7 +37,32 @@
 <script type="text/javascript">
     function validateLogin(username, password){
         //window.location.replace("example.com");
-        alert(username + password);
+        console.log(username);
+        $.ajax({data:{username, password},
+                type:"POST",
+                url:'http://localhost:5000/validateLogin',
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+                success: function(response) {
+                    if (response=="tutor") {
+                        document.cookie="Username = " + username + ";path=/" 
+                        window.location.href = "../subject/tutor_queue.html"
+                    }
+                    else if (response=="student") {
+                        document.cookie="Username = " + username + ";path=/" 
+                        window.location.href = "../subject/student_subject.html"
+                    }
+                    else{
+                        alert("Username or password incorrect!");
+                    }
+                    console.log(response);
+    
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            })
     }
 
 

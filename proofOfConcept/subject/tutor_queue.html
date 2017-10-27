@@ -58,7 +58,6 @@ function printQueue(text) {
 }
 
 function goToSession(sessionID) {
-  var uname = prompt("Please enter username", "Username");
   $.ajax({
     data:{id : sessionID},
     type:"POST",
@@ -68,8 +67,7 @@ function goToSession(sessionID) {
     },
     success: function(response) {
       document.cookie="SessionID = " + sessionID + ";path=/";
-      document.cookie="Username = "+ uname + ";path=/" 
-      window.location.href = "../"
+      window.location.href = "/"
     },
     error: function(error){
       console.log(error);
