@@ -7,7 +7,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
@@ -121,7 +121,7 @@ def Questions():
 		cur.execute(query)
 		question = cur.fetchall()
 		pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"
-		return re.sub(pattern=pattern, repl="\\1 \\2 \\3 \\4 \\5 \\6", string=str(question))
+		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))
 		conn.commit()
 		cur.close()
 		conn.close()

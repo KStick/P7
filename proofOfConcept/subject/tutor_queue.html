@@ -11,8 +11,8 @@
   <table id="table">
     <thead>
       <tr id="rows" onclick='alert(document.getElementById("table").rows[0].cells.item(0).innerHTML)'>
-        <th>subject</th>
         <th>Name</th>
+        <th>Subject</th>
         <th>Description</th>
         <th>Submitted</th>
       </tr>
@@ -26,10 +26,10 @@
   
 $(document).ready(function() {     
         $.ajax({
-            url: "log.txt",
+            url: 'http://localhost:5000/Questions',
             cache: false,
             success: function(text){         
-               var stringsplit = text.split("_");
+               var stringsplit = text.split(",");
                printQueue(stringsplit);
             },
             error: function(text) {
@@ -42,16 +42,29 @@ function printQueue(text) {
           var contentToPrint;
           var tableHTML;
           for (var i = 0; i < text.length-1; i++) {
-            console.log(i);
-            if (i%4==0) {
-              tableHTML = "<tr onclick='alert(" + i/4 + ")'>";
-              for (var j = i; j <= i+3; j++) {
-                tableHTML += "<td> " + text[j] + " </td>" ;
+
+            if (i%6==0) {
+              tableHTML = "<tr onclick='goToSession(" + Number(text[i].replace(/[[(\s]/g, '')) + ")'>";
+              for (var j = i; j < i+6; j++) {
+                if(j%6==0 || j%6==5){/*do nothing*/}
+                else if(j%6==1 || j%6==2){
+                  tableHTML += "<td> " + text[j].replace(/(['])/g, ''); + " </td>" ;
+                }
+                else{
+                  tableHTML += "<td> " + text[j] + " </td>" ;
+                }
               }
               tableHTML += "</tr>";
               document.getElementById("table").innerHTML += tableHTML;
             }
           }
+        }
+
+function goToSession(sessionID) {
+          document.cookie="SessionID = " + sessionID + ";path=/";
+          document.cookie="Username = Finn;path=/" 
+          window.location.href = "../"
+  
         }
 
 </script>  
