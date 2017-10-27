@@ -174,7 +174,7 @@ def validateLogin():
 
 	conn = connect()
 	cur = conn.cursor()
-	query = "SELECT role FROM users, user_roles WHERE users.username ='" + str(username) + "' " + "AND users.password = '" + str(password) + "';"
+	query = "SELECT role FROM users NATURAL JOIN user_roles WHERE users.username ='" + str(username) + "' " + "AND users.password = '" + str(password) + "';"
 	cur.execute(query)
 	conn.commit
 	cur.close()
