@@ -1,58 +1,77 @@
-<!DOCTYPE html>
-<html>
+<DOCTYPE html>
 <head>
-	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="mystyle.css">
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../mockupCSS.css">
+    <link rel="stylesheet" type="text/css" href="../globalCSS.css">
 </head>
+
+
+<html>
 <body>
+  	<div class = "main-body">
+		<div class = "top-banner">
+            <p class = "top-banner-text"> general content </p>
+            <p class = "login-link">Logged in as: <span id="cookie_name"></span><p>
 
-<h3>Submission form</h3>
+        </div>
+        <div class = "content-container">
+            <div class = "content-left">
+                <p>List of open lectures?</p>
+            </div>
+            <div class = "content-middle">
+                <p>Bunch of text describing how to navigate around?</p>
+            </div>
+            <div class = "content-right">
+                
+                    <div class = "form-holder">
+                    <form onsubmit="validateSubmit(subject.value, question.value); return false;" autocomplete="on">
+                        <label>Subject:</label>
+                        <select id="subject" required>
+                            <option value=""> -- select subject --</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Software">Software</option>
+                            <option value="Biology">Biology</option>
+                            <option value="Medicin">Medicin</option>
+                        </select><br><br>
+                        <textarea id = "question" class = "question-input-field" placeholder='Please describe your problem' required></textarea><br><br>
+                        <input type = "submit" id = "submit-button" value = "Send question">
+                    </form>
+                </div>
 
-<div class="container">
-  <form>
-    <label>Subject</label>
-    <select id="subject" name="subject">
-      <option value="math">Math</option>
-      <option value="biology">Biology</option>
-      <option value="software">Software</option>
-    </select>
 
-    <label>Question</label>
-    <textarea id="question" name="question" placeholder="Write question.." style="height:200px"></textarea>
-
-    <input type="submit" value="Submit" id="submit-button">
-  </form>
-</div>
+                
+            </div>
+        </div>
+	</div>
 
 <script>
-	$(document).ready(function(){
-	var id = 0;
-		$("#submit-button").click(function(){
-			$.ajax({
-				data:{username : getCookie("Username"), subject : $("#subject").val(), question : $("#question").val()},
-				type:"POST",
-				url:'http://localhost:5000/Questions',
-				headers: {
-					'Access-Control-Allow-Origin': '*'
-                },
-				success: function(response) {
-					document.cookie="SessionID = " + response + ";path=/";
-					window.location.href = "../session.html";
-	
-				},
-				error: function(error){
-					console.log(error);
-				}
-            })
-			return false;
-		});
-	})
 
-	function getCookie(name) {
- 	    var value = "; " + document.cookie;
-	    var parts = value.split("; " + name + "=");
-	    if (parts.length == 2) return parts.pop().split(";").shift();
-	}
+    document.getElementById('cookie_name').textContent = getCookie('Username');
+
+        function validateSubmit(subject, question){
+            $.ajax({
+                data:{username : getCookie("Username"), subject : subject, question : question},
+                type:"POST",
+                url:'http://localhost:5000/Questions',
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+                success: function(response) {
+                    document.cookie="SessionID = " + response + ";path=/";
+                    window.location.href = "../session.html";
+    
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            })
+        }
+
+    function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
 
 </script>
 

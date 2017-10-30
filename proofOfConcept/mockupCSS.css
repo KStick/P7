@@ -63,10 +63,11 @@
     top: 25%;
     right: 0;
     height: 50%;
+    padding-right: 8px;
 }
 
 .content-container{
-    height: 90%;
+    height: 89%;
 }
 
 .content-container div{
@@ -84,12 +85,12 @@
 
 .content-right{
     margin-right: 0;
+    overflow-y: scroll;
 }
 
 .form-holder{
     text-align: left !important;
     min-width: 100%;
-    margin-left: 5px;
 }
 
 .question-input-field{
