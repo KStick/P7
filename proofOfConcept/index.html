@@ -47,11 +47,11 @@
                 success: function(response) {
                     if (response=="tutor") {
                         document.cookie="Username = " + username + ";path=/" 
-                        window.location.href = "../subject/tutor_queue.html"
+                        window.location.href = "./subject/tutor_queue.html"
                     }
                     else if (response=="student") {
                         document.cookie="Username = " + username + ";path=/" 
-                        window.location.href = "../subject/student_subject.html"
+                        window.location.href = "./subject/student_subject.html"
                     }
                     else{
                         alert("Username or password incorrect!");
