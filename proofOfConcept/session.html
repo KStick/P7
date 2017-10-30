@@ -1,0 +1,260 @@
+<DOCTYPE html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="//twemoji.maxcdn.com/2/twemoji.min.js?2.3.0"></script>
+    <link rel="stylesheet" type="text/css" href="globalCSS.css">
+    <link rel="stylesheet" type="text/css" href="mockupCSS.css">
+	<script src="fabric.js"></script>
+</head>
+
+
+<html>
+
+
+<script type="text/javascript">
+	function deleteAllCookies() {
+		document.cookie = "Username " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		document.cookie = "SessionID " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	}
+</script>
+
+<body onunload="deleteAllCookies()">
+ 
+   <script>
+	function getCookie(name) {
+ 	    var value = "; " + document.cookie;
+	    var parts = value.split("; " + name + "=");
+	    if (parts.length == 2) return parts.pop().split(";").shift();
+	}
+    </script>
+
+   <script>
+	var session = getCookie("SessionID");
+	$.post("Session.php", {id : session});
+    </script>
+
+ 	
+
+
+
+	<div class = "main-body">
+		<div class="visual-box">
+            <canvas id = "whiteboard">
+                
+            </canvas>
+		</div>
+
+		<div class = "chat-window-container">
+			<div class = "chat-window" id="chat-window">
+		                		
+			</div>
+		</div>
+
+		<div class = "menu-bar">
+            <button id = "drawingMode">
+               Cancel drawing mode 
+        	</button>
+	    	<button id = "clear">
+				Clear
+	    	</button>
+	    	<select id="drawingModeSelector">
+				<option>Pencil</option>
+				<option>Circle</option>
+				<option>Spray</option>
+	   		 </select>
+			<span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawingLineWidth">
+		<input type="color" value="#005E7A" id="drawingColor"><br>
+		</div>
+		
+		<div class = "chat-box">
+			<input type="text" class = "chat-input" id="user-message"></textarea>
+			</input>
+			<button class = "post-message chat-page" id="send-message">
+				Send
+			</button>
+		</div>
+	</div>
+	
+<script>
+	function saveWhiteboard() {
+		var ID = getCookie("SessionID");
+		var tmp = JSON.stringify(canvas.toJSON());
+		console.log(tmp);
+		$.post("Post.php", {sessionID : ID, data : tmp});
+	}
+</script>
+
+<script>
+	function loadWhiteboard() {
+		var ID = getCookie("SessionID");
+		$(function(){
+   			$.get( "Sessions/".concat(ID), function( data ) {
+					canvas.loadFromJSON(decodeEntities(data), function() {
+   			 		canvas.renderAll();
+				}); 
+   			});
+		});
+	}
+</script>
+
+<script>
+	function decodeEntities(encodedString) {
+    	var textArea = document.createElement('textarea');
+    	textArea.innerHTML = encodedString;
+    	return textArea.value;
+	}
+</script>
+
+<script>
+    var width = 0;
+	var height = 0;
+	var canvas;
+	$(document).ready(function(){
+
+		window.onload = userJoinsChat();
+		window.addEventListener("unload", userLeavesChat);
+		// whiteboard functions
+		width = document.getElementById("whiteboard").offsetWidth;
+		height = document.getElementById("whiteboard").offsetHeight;
+		canvas = new fabric.Canvas("whiteboard" , {isDrawingMode: true});
+		canvas.setWidth(width);
+		canvas.setHeight(height);
+		canvas.freeDrawingBrush.color = drawingColor.value;		
+		loadWhiteboard();
+		
+		setInterval(loadWhiteboard, 1000);
+		canvas.on('path:created', function(e){
+			console.log("path created");	
+			saveWhiteboard();
+
+		});	
+
+		// chat functions
+
+		$("#send-message").click(function(){
+			var clientmsg = document.getElementById("user-message").value;
+			var username = getCookie("Username");
+			clientmsg = checkStandardEmojis(clientmsg);
+			var sessionID = getCookie("SessionID");
+			$.post("postchatlog.php", {username : username, text : clientmsg, sessionID : sessionID});
+			$('#user-message').val("", "");
+			return false;
+		});
+
+		setInterval(loadLog, 300);
+
+		$("#user-message").keyup(function(event){
+			if(event.keyCode == 13){
+				$("#send-message").click();
+			}
+		});
+
+
+
+	})
+	var drawingModeEL = document.getElementById("drawingMode"),
+		clearEL = document.getElementById("clear"),
+		drawingLineWidthEL = document.getElementById("drawingLineWidth"),
+		drawingColorEL = document.getElementById("drawingColor");
+
+	clearEL.onclick = function() { 
+		canvas.clear();
+		saveWhiteboard();
+	}
+	
+	drawingModeEL.onclick = function() {
+		canvas.isDrawingMode = !canvas.isDrawingMode;
+		if(canvas.isDrawingMode){
+			drawingModeEL.innerHTML = "Cancel drawing mode";
+		}
+		else {
+			drawingModeEL.innerHTML = "Enter drawing mode";
+		}};
+	
+	document.getElementById('drawingModeSelector').onchange = function() {
+		if(this.value === ""){
+			<!--here we can make custom brushes-->
+		}	
+		else {
+			canvas.freeDrawingBrush = new fabric[this.value + 'Brush'](canvas);
+		}
+		
+		canvas.freeDrawingBrush.color = drawingColor.value;
+		canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEL.value,10) || 1;
+	}
+	
+	drawingLineWidthEL.onchange = function(){
+		canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
+		this.previousSibling.innerHTML= this.value;
+	}
+
+	drawingColor.onchange = function() {
+		canvas.freeDrawingBrush.color = this.value;
+	}
+
+
+</script>
+
+
+
+<script type="text/javascript">
+
+
+
+	//Loads the log to write the chat. This function is called at an interval
+	 function loadLog(){
+	 	twemoji.size = '72x72';
+        var oldscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height before the request
+        var sessionID = getCookie("SessionID");
+        var path = "SessionsChatlogs/" + sessionID + ".html";
+        console.log(path);
+        $.ajax({
+            url: path,
+            cache: false,
+            success: function(html){
+
+                $("#chat-window").html(twemoji.parse(decodeEntities(html))); //Insert chat log into the #chatbox div   
+                
+                //Auto-scroll           
+                var newscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height after the request
+                if(newscrollHeight > oldscrollHeight){
+                    $("#chat-window").animate({ scrollTop: newscrollHeight }, 'normal'); //Autoscroll to bottom of div
+                }               
+            },
+        });
+
+  
+    }	
+</script>
+
+
+<script type="text/javascript">
+	function userJoinsChat() {
+
+		var username = getCookie("Username");
+		var sessionID = getCookie("SessionID");
+		var clientmsg = username + " has joined the chat!";
+		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
+	}
+</script>
+
+<script type="text/javascript">
+	function userLeavesChat() {
+		var username = getCookie("Username");
+		var sessionID = getCookie("SessionID");
+		var clientmsg = username + " has left the chat!";
+		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
+	}
+</script>
+
+<script type="text/javascript">
+	function checkStandardEmojis(usermsg) {		
+		usermsg = usermsg.replace(':D', '&#x1f603;');
+		usermsg = usermsg.replace(';)', '😑');
+		return usermsg;	
+	}
+</script>
+
+
+</body>
+</html>

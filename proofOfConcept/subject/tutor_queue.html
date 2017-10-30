@@ -67,7 +67,7 @@ function goToSession(sessionID) {
     },
     success: function(response) {
       document.cookie="SessionID = " + sessionID + ";path=/";
-      window.location.href = "/"
+      window.location.href = "../session.html"
     },
     error: function(error){
       console.log(error);
