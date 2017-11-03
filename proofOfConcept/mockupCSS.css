@@ -85,12 +85,12 @@
 
 .content-right{
     margin-right: 0;
-    overflow-y: scroll;
 }
 
 .form-holder{
     text-align: left !important;
     min-width: 100%;
+    position: relative;
 }
 
 .question-input-field{

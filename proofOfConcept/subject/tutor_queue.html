@@ -24,15 +24,15 @@
             <div class = "content-right">
                 <div class = "form-holder">
                    <table id="myTable">
-    <thead>
-      <tr id="rows">
-        <th onclick="sortTable(0)">Name</th>
-        <th onclick="sortTable(1)">Subject</th>
-        <th onclick="sortTable(2)">Description</th>
-        <th onclick="sortTable(3)">Submitted</th>
-      </tr>
-    </thead>
-  </table>
+                    <thead>
+                      <tr id="rows">
+                        <th onclick="sortTable(0)">Name</th>
+                        <th onclick="sortTable(1)">Subject</th>
+                        <th onclick="sortTable(2)">Description</th>
+                        <th onclick="sortTable(3)">Submitted</th>
+                      </tr>
+                    </thead>
+                  </table>
                 </div>
             </div>
         </div>
@@ -55,10 +55,10 @@
 
     function printQueue(text) {
         var contentToPrint;
-        var tableHTML;
+        var tableHTML = "<tbody id='tutorTableBody'>";
         for (var i = 0; i < text.length-1; i++) {
             if (i%6==0) {
-                tableHTML = "<tr onclick='goToSession(" + Number(text[i].replace(/[[(\s]/g, '')) + ")'>";
+                tableHTML += "<tr onclick='goToSession(" + Number(text[i].replace(/[[(\s]/g, '')) + ")'>";
                 for (var j = i; j < i+6; j++) {
                     if(j%6==0 || j%6==5){/*do nothing*/}
                     else if(j%6==1 || j%6==2){
@@ -69,9 +69,10 @@
                     }
                 }
                 tableHTML += "</tr>";
-                document.getElementById("myTable").innerHTML += tableHTML;
             }
         }
+        document.getElementById("myTable").innerHTML += "</tbody>";
+        document.getElementById("myTable").innerHTML += tableHTML;
     }
 
     function validateSubmit(subject, question){

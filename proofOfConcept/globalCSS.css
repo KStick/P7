@@ -19,22 +19,34 @@ button {
     vertical-align: middle;
 }
 
-th {
+th, td {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
     cursor: pointer;
-}
 
-td {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-    cursor: pointer;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 table {
     border-collapse: collapse;
+    height: 100%;
+}
+
+tbody 
+{
+    display: block;
+   overflow: auto;
+   height: 95%;
+}
+
+thead, tbody tr{
+    display: table;
+    width: 99.9%;
+    table-layout: fixed;
 }
 
 .main-body {
