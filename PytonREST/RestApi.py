@@ -1,3 +1,7 @@
+##TODO##
+#Fix redundancy such as conn in every function
+
+
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
@@ -19,19 +23,34 @@ def initdb():
 	conn = connect()
 	cur = conn.cursor()
 	try:
-		cur.execute("""CREATE TABLE users(id serial PRIMARY KEY, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, email TEXT NOT NULL);""")
+		cur.execute("""CREATE TABLE users( 
+						username TEXT UNIQUE NOT NULL, 
+						password TEXT NOT NULL, 
+						email TEXT NOT NULL);
+					""")
 	except Exception as e:
 		pass
 	try:
-		cur.execute("""CREATE TABLE questions(id serial PRIMARY KEY, username TEXT NOT NULL REFERENCES users(username) , subject TEXT NOT NULL  ,question TEXT NOT NULL, date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP::TIMESTAMP(0), answered BOOLEAN DEFAULT false); """)
+		cur.execute("""CREATE TABLE questions(
+						id serial PRIMARY KEY,
+						username TEXT NOT NULL REFERENCES users(username) ON UPDATE CASCADE , 
+						subject TEXT NOT NULL,
+						question TEXT NOT NULL,
+						date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP::TIMESTAMP(0), answered BOOLEAN DEFAULT false); 
+					""")
 	except Exception as e:
 		pass
 	try:
-		cur.execute("""CREATE TABLE roles(id serial PRIMARY KEY, role TEXT UNIQUE NOT NULL); """)
+		cur.execute("""CREATE TABLE roles(
+						role TEXT UNIQUE PRIMARY KEY NOT NULL); 
+					""")
 	except Exception as e:
 		pass
 	try:
-		cur.execute("""CREATE TABLE user_roles(username TEXT NOT NULL UNIQUE REFERENCES users(username), role TEXT REFERENCES roles(role));""")
+		cur.execute("""CREATE TABLE user_roles(
+						username TEXT NOT NULL UNIQUE REFERENCES users(username) ON UPDATE CASCADE, 
+						role TEXT REFERENCES roles(role));
+					""")
 	except Exception as e:
 		pass
 	conn.commit()
@@ -77,6 +96,7 @@ def hello_world():
 def hello():
     return 'Hello, World'
 
+#Make it a bit more beautiful to look at. For example fix append
 @app.route('/getquestion/<int:id>')
 def getQuestion(id):
 	conn = connect()
