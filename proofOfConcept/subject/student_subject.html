@@ -7,11 +7,14 @@
 
 
 <html>
-<body>
+<body onunload="logOut()">
   	<div class = "main-body">
 		<div class = "top-banner">
             <p class = "top-banner-text"> general content </p>
-            <p class = "login-link">Logged in as: <span id="cookie_name"></span><p>
+            <p class = "login-link">
+                <button id="logout" class="log-out-button" onclick="logOut()">Log out!</button>
+                Logged in as: <span id="cookie_name">
+                </span><p>
 
         </div>
         <div class = "content-container">
@@ -22,29 +25,27 @@
                 <p>Bunch of text describing how to navigate around?</p>
             </div>
             <div class = "content-right">
-                
-                    <div class = "form-holder">
+                <div class = "form-holder">
                     <form onsubmit="validateSubmit(subject.value, question.value); return false;" autocomplete="on">
                         <label>Subject:</label>
-                        <select id="subject" required>
+                        <select id="subject" required autofocus>
                             <option value=""> -- select subject --</option>
                             <option value="Mathematics">Mathematics</option>
                             <option value="Software">Software</option>
                             <option value="Biology">Biology</option>
                             <option value="Medicin">Medicin</option>
                         </select><br><br>
-                        <textarea id = "question" class = "question-input-field" placeholder='Please describe your problem' required></textarea><br><br>
+                        <textarea rows="4" id = "question" class = "question-input-field" placeholder='Please describe your problem' required></textarea><br><br>
                         <input type = "submit" id = "submit-button" value = "Send question">
                     </form>
-                </div>
-
-
-                
+                </div>                
             </div>
         </div>
 	</div>
 
 <script>
+
+    document.getElementById('logout').addEventListener("click", logOut);
 
     document.getElementById('cookie_name').textContent = getCookie('Username');
 
@@ -73,6 +74,10 @@
         if (parts.length == 2) return parts.pop().split(";").shift();
     }
 
+    function logOut(){
+        document.cookie = "Username " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+        window.location.href = "../";
+    }
 </script>
 
 </body>
