@@ -1,13 +1,13 @@
 .left-container {
     float: left;
-    width: 20%;
+    width: 30vh;
     height: 100%;
 }
 
 .webcam-container{
     position: absolute;
-    width: 20vw;
-    height: 2vw;
+    width: 30vh;
+    height: 24.6vh;
 }
 
 .webcam-container.top {
@@ -16,9 +16,9 @@
 
 .menu-bar {
     position: absolute;
-	width: 20vw;
-    top: 20vw;
-    bottom: 20vw;
+	width: 30vh;
+    top: 24.6vh;
+    bottom: 24.6vh;
 	background-color: BFBD7E;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .visual-box {
-	width: 80%;
+	width: 85.35vw;
 	min-height: 100vh;
 	background-color: E1CFAF;
     position: absolute;
