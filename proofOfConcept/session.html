@@ -109,6 +109,23 @@
 </script>
 
 <script>
+function setSize() {
+        var height = $(window).height() * 0.7;
+        var width = $(window).width() * 0.7;
+        console.log('height: ' + height);
+        console.log('width: ' + width);
+        
+        canvas.setDimensions({
+            width: width,
+            height: height
+        });
+        
+        //canvas.calcOffset();
+        canvas.renderAll();
+    };
+</script>
+
+<script>
     var width = 0;
 	var height = 0;
 	var canvas;
@@ -131,6 +148,10 @@
 			saveWhiteboard();
 
 		});	
+
+		$(window).resize(function() {
+			setSize();
+		}); 
 
 		// chat functions
 
