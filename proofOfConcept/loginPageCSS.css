@@ -2,6 +2,7 @@
     margin-left: 35%;
     width: 30%;
     background-color: 837D9B;
+    padding-bottom: 0.1%;
 }
 
 .form-header-holder{
@@ -10,4 +11,8 @@
 
 .form-input-holder input{
     margin-left: 10px;
+}
+
+select {
+	margin-left: 2%;
 }

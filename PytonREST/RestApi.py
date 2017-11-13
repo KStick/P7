@@ -171,7 +171,6 @@ def QuestionAnswered():
 def insertRole():
 
 	#format user:role
-
 	data = request.form
 	username = data['username']
 	role = data['role']
@@ -204,3 +203,28 @@ def validateLogin():
 		return role[0]
 	else:
 		return "NULL"
+
+@app.route('/CreateUser', methods = ['POST'])
+def CreateUser():
+
+	data = request.form
+	username = data['username']
+	password = data['password']
+	email = data['email']
+	role = data['role']
+
+	try:
+		conn = connect()
+		cur = conn.cursor()
+		query = "INSERT INTO users(username, password, email) " + "VALUES ('" + str(username) + "','" + str(password) + "','" + str(email) + "');"
+		cur.execute(query)
+		conn.commit()
+		query = "INSERT INTO user_roles(username, role) " + "VALUES ('" + str(username) +"','" + str(role) + "') RETURNING role;"
+		cur.execute(query)
+		conn.commit()
+		assigned_role = cur.fetchone()[0]
+		cur.close()
+		conn.close()
+		return str(assigned_role)
+	except psycopg2.Error as e:
+		return('username_taken')

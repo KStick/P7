@@ -14,19 +14,24 @@
         </div>
         <div class = "login-form">
             <div class = "form-header-holder">
-                <h3>Login</h3>
+                <h3>Register</h3>
             </div>
             <div class = "form-input-holder">
-                <form onsubmit="validateLogin(loginName.value, password.value); return false;" autocomplete="on">
+                <form onsubmit="createUser(loginName.value, password.value, email.value, role.value); return false;" autocomplete="on">
                     <p>Account name</p>
                     <input type = "text" placeholder="Insert username..." id="loginName" autofocus required>
                     <p>Password</p>
                     <input type = "password" placeholder="Insert password..." id="password" required>
-                    <p><a href="">Forgot password?</a></p>
-                    <input type="submit" value="login">
-                    <div class="new-user-container">
-                        <p>New user? <a href="/registerUser.html">click here</a></p>
-                    </div>
+                    <input type = "password" placeholder="Repeat password..." id="repeat_password" required>
+                    <p>Email</p>
+                    <input type = "text" placeholder="Insert email..." id="email" required>
+                    <p>Role</p>
+                    <select id="role" required>
+                        <option value=""> -- select role --</option>
+                        <option value="student">student</option>
+                        <option value="tutor">tutor</option>
+                    </select><br><br>
+                    <input type="submit" value="register">
                 </form>
             </div>
         </div>
@@ -35,12 +40,11 @@
 </html>
 
 <script type="text/javascript">
-    function validateLogin(username, password){
+    function createUser(username, password, email, role){
         //window.location.replace("example.com");
-        console.log(username);
-        $.ajax({data:{username, password},
+        $.ajax({data:{username, password, email, role},
                 type:"POST",
-                url:'http://localhost:5000/validateLogin',
+                url:'http://localhost:5000/CreateUser',
                 headers: {
                     'Access-Control-Allow-Origin': '*'
                 },
@@ -53,8 +57,8 @@
                         document.cookie="Username = " + username + ";path=/" 
                         window.location.href = "./subject/student_subject.html"
                     }
-                    else{
-                        alert("Username or password incorrect!");
+                    else if(response=="username_taken"){
+                        alert('Username is taken');
                     }
                     console.log(response);
     
