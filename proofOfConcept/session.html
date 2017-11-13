@@ -38,6 +38,28 @@
 
 
 	<div class = "main-body">
+        <div class = "left-container">
+            <div class = "webcam-container top">
+            </div>
+            <div class = "menu-bar">
+                <button id = "drawingMode">
+                   Cancel drawing mode 
+                </button>
+                <button id = "clear">
+                    Clear
+                </button>
+                <select id="drawingModeSelector">
+                    <option>Pencil</option>
+                    <option>Circle</option>
+                    <option>Spray</option>
+                 </select>
+                <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawingLineWidth">
+                <input type="color" value="#005E7A" id="drawingColor"><br>
+            </div>
+            <div class = "webcam-container bottom">
+            </div>
+        </div>
+        
 		<div class="visual-box">
             <canvas id = "whiteboard">
                 
@@ -46,33 +68,14 @@
 
 		<div class = "chat-window-container">
 			<div class = "chat-window" id="chat-window">
-		                		
+		        <input type="text" class = "chat-input" id="user-message"></textarea>
+                </input>
+                <button class = "send-message chat-page" id="send-message">
+                    Send
+                </button>        		
 			</div>
 		</div>
-
-		<div class = "menu-bar">
-            <button id = "drawingMode">
-               Cancel drawing mode 
-        	</button>
-	    	<button id = "clear">
-				Clear
-	    	</button>
-	    	<select id="drawingModeSelector">
-				<option>Pencil</option>
-				<option>Circle</option>
-				<option>Spray</option>
-	   		 </select>
-			<span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawingLineWidth">
-		<input type="color" value="#005E7A" id="drawingColor"><br>
-		</div>
 		
-		<div class = "chat-box">
-			<input type="text" class = "chat-input" id="user-message"></textarea>
-			</input>
-			<button class = "send-message chat-page" id="send-message">
-				Send
-			</button>
-		</div>
 	</div>
 	
 <script>

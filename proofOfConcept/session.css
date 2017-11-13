@@ -1,8 +1,38 @@
+.left-container {
+    float: left;
+    width: 20%;
+    height: 100%;
+}
+
+.webcam-container{
+    position: absolute;
+    width: 20vw;
+    height: 2vw;
+}
+
+.webcam-container.top {
+    top: 0;
+}
+
+.menu-bar {
+    position: absolute;
+	width: 20vw;
+    top: 20vw;
+    bottom: 20vw;
+	background-color: BFBD7E;
+}
+
+.webcam-container.bottom {
+    bottom: 0;
+}
+
 .visual-box {
-	width: 70%;
-	min-height: 70vh;
+	width: 80%;
+	min-height: 100vh;
 	background-color: E1CFAF;
-    position: relative;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 #whiteboard{
@@ -15,9 +45,7 @@
 	width: 30%;
 	min-height: 100vh;
 	background-color: 645C84;
-	position: absolute;
-	top: 0;
-	left: 70%;
+    float: right;
 }
 
 .chat-window {
@@ -32,18 +60,14 @@
 .chat-box {
 	width: 70%;
 	min-height: 22vh;
-	background-color: 645C84;
-	position: relative;
 }
 
 .chat-input{
 	padding: 0;
 	border: 0;
-	width: 93%;
+	width: 20%;
 	height: 2em;
-	position: absolute;
-	bottom: 2%;
-	left: 0.5%;
+	float: right;
 }
 
 .send-message {
@@ -52,15 +76,6 @@
 	right: 0.5%;
 	height: 2em;
 	width: 5%;
-}
-
-.menu-bar {
-	width: 70%;
-	height: 8vh;
-	min-height: 10px;
-	background-color: BFBD7E;
-    border-radius: 0 0 15px 15px;
-    position: relative;
 }
 
 img.emoji {  
