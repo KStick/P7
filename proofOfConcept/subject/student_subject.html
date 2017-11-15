@@ -7,7 +7,7 @@
 
 
 <html>
-<body onunload="logOut()">
+<body onunload="logOutTimer()">
   	<div class = "main-body">
 		<div class = "top-banner">
             <p class = "top-banner-text"> general content </p>
@@ -26,7 +26,7 @@
             </div>
             <div class = "content-right">
                 <div class = "form-holder">
-                    <form onsubmit="validateSubmit(subject.value, question.value); return false;" autocomplete="on">
+                    <form onsubmit="validateSubmit(subject.value, question.value, access.value); return false;" autocomplete="on">
                         <label>Subject:</label>
                         <select id="subject" required autofocus>
                             <option value=""> -- select subject --</option>
@@ -34,6 +34,12 @@
                             <option value="Software">Software</option>
                             <option value="Biology">Biology</option>
                             <option value="Medicin">Medicin</option>
+                        </select><br><br>
+                        <label>Access:</label>
+                        <select id="access" required autofocus>
+                            <option value=""> -- select access --</option>
+                            <option value="private">Private</option>
+                            <option value="public">Public</option>
                         </select><br><br>
                         <textarea rows="4" id = "question" class = "question-input-field" placeholder='Please describe your problem' required></textarea><br><br>
                         <input type = "submit" id = "submit-button" value = "Send question">
@@ -44,14 +50,12 @@
 	</div>
 
 <script>
-
+    document.getElementById('cookie_name').textContent = getCookie('Username');
     document.getElementById('logout').addEventListener("click", logOut);
 
-    document.getElementById('cookie_name').textContent = getCookie('Username');
-
-        function validateSubmit(subject, question){
+        function validateSubmit(subject, question, access){
             $.ajax({
-                data:{username : getCookie("Username"), subject : subject, question : question},
+                data:{username : getCookie("Username"), subject : subject, question : question, access : access, submit : 'yes'},
                 type:"POST",
                 url:'http://localhost:5000/Questions',
                 headers: {
@@ -59,7 +63,7 @@
                 },
                 success: function(response) {
                     document.cookie="SessionID = " + response + ";path=/";
-                    window.location.href = "../session.html";
+                    window.open("../session.html");
     
                 },
                 error: function(error){
@@ -75,10 +79,18 @@
     }
 
     function logOut(){
-        document.cookie = "Username " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+        document.cookie = "Username=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/";
         window.location.href = "../";
     }
+
+    function logOutTimer(){
+        var d = new Date();
+        d.setTime(d.getTime() + (30 * 60 * 1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie="Username = " + getCookie('Username') + ";" + expires + ";path=/" 
+    }
 </script>
+
 
 </body>
 </html>

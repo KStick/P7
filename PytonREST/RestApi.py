@@ -36,7 +36,9 @@ def initdb():
 						username TEXT NOT NULL REFERENCES users(username) ON UPDATE CASCADE , 
 						subject TEXT NOT NULL,
 						question TEXT NOT NULL,
-						date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP::TIMESTAMP(0), answered BOOLEAN DEFAULT false); 
+						date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP::TIMESTAMP(0),
+						answered BOOLEAN DEFAULT false,
+						public BOOLEAN NOT NULL); 
 					""")
 	except Exception as e:
 		pass
@@ -120,16 +122,16 @@ def getQuestion(id):
 
 @app.route('/Questions', methods = ['GET', 'POST'])
 def Questions():
-	
-	#format user:subject:question
-	if request.method == "POST":
-		data = request.form
+	data = request.form
+	if data['submit']=='yes':
 		username = data['username']
 		subject = data['subject']
 		question = data['question']
+		access = data['access']
 		conn = connect()
 		cur = conn.cursor()
-		query = "INSERT INTO questions(username, subject, question)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "') RETURNING id;"
+		print(access)
+		query = "INSERT INTO questions(username, subject, question, public)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "'," + str(str(access)=='public') + ") RETURNING id;"
 		cur.execute(query)
 		sessionID = cur.fetchone()[0]
 		conn.commit()
@@ -137,10 +139,23 @@ def Questions():
 		conn.close()
 		return str(sessionID)
 
-	elif request.method == "GET":
+	elif data['submit']=='no' and data['access']=='public':
 		conn = connect()
 		cur = conn.cursor()
-		query = "SELECT * FROM questions WHERE answered = false"
+		query = "SELECT * FROM questions WHERE answered = false AND public = true;"
+		cur.execute(query)
+		question = cur.fetchall()
+		pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"
+		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))
+		conn.commit()
+		cur.close()
+		conn.close()
+		return str(question)
+
+	elif data['submit']=='no' and data['access']=='private':
+		conn = connect()
+		cur = conn.cursor()
+		query = "SELECT * FROM questions WHERE answered = false AND public = false;"
 		cur.execute(query)
 		question = cur.fetchall()
 		pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"

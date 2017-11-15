@@ -7,7 +7,7 @@
 
 
 <html>
-<body>
+<body onunload="logOutTimer()">
   	<div class = "main-body">
 		<div class = "top-banner">
             <p class = "top-banner-text"> general content </p>
@@ -18,15 +18,15 @@
         </div>
         <div class = "content-container">
             <div class = "content-left">
-                <p>List of open lectures?</p>
+                <p>Public sessions</p>
+                <iframe src="table_public_questions.html" width="98%" height="93.5%"></iframe>
             </div>
             <div class = "content-middle">
             	<p>notinhg to see here</p>
             </div>
             <div class = "content-right">
-                <iframe src="table_with_questions.html" width="98%" height="100%">
-            		<p>Bunch of text describing how to navigate around?</p>
-            	</iframe>
+                <p>Private sessions</p>
+                <iframe src="table_private_questions.html" width="98%" height="93.5%"></iframe>
             </div>
         </div>
 	</div>
@@ -45,6 +45,12 @@
     	window.location.href = "../";
     }
 
+    function logOutTimer(){
+        var d = new Date();
+        d.setTime(d.getTime() + (30 * 60 * 1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie="Username = " + getCookie('Username') + ";" + expires + ";path=/" 
+    }
 </script>
 
 </body>
