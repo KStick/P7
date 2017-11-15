@@ -17,14 +17,14 @@
                 <h3>Register</h3>
             </div>
             <div class = "form-input-holder">
-                <form onsubmit="createUser(loginName.value, password.value, email.value, role.value); return false;" autocomplete="on">
+                <form onsubmit="createUser(loginName.value, password.value, repeat_password.value, email.value, role.value); return false;" autocomplete="on">
                     <p>Account name</p>
                     <input type = "text" placeholder="Insert username..." id="loginName" autofocus required>
                     <p>Password</p>
                     <input type = "password" placeholder="Insert password..." id="password" required>
                     <input type = "password" placeholder="Repeat password..." id="repeat_password" required>
                     <p>Email</p>
-                    <input type = "text" placeholder="Insert email..." id="email" required>
+                    <input type = "email" placeholder="Insert email..." id="email" required>
                     <p>Role</p>
                     <select id="role" required>
                         <option value=""> -- select role --</option>
@@ -40,9 +40,9 @@
 </html>
 
 <script type="text/javascript">
-    function createUser(username, password, email, role){
-        //window.location.replace("example.com");
-        $.ajax({data:{username, password, email, role},
+    function createUser(username, password, repeat_password, email, role){
+        if (password == repeat_password) {
+            $.ajax({data:{username, password, email, role},
                 type:"POST",
                 url:'http://localhost:5000/CreateUser',
                 headers: {
@@ -66,8 +66,10 @@
                 error: function(error){
                     console.log(error);
                 }
-            })
+            })    
+        }
+        else{
+            alert('Passwords did not match!');
+        }
     }
-
-
 </script>
