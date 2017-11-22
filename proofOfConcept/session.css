@@ -41,6 +41,57 @@
     position: absolute;
 }
 
+
+#chat-container {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 15%;
+    height: 30%;
+    background-color: white;
+}
+
+#name-bar {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+    height: 30px;
+    background-color: lightgrey;
+}
+
+#nav-bar {
+    position: absolute;
+    background-color: lightgrey;
+    top: 0px;
+    right: 0px;
+    text-align: center;
+    width: 30px;
+    height: 100%;
+    border: 1px solid;
+}
+
+#box  {
+    position: relative;
+    background-color: white;
+    width: 100%;
+    top: 30px;
+    height: 78.5%;
+}
+
+#message-box {
+    position: absolute;
+    resize: none;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 40px; 
+}
+
+
+
+
+/*
 .chat-window-container {
 	width: 30%;
 	min-height: 100vh;
@@ -77,7 +128,7 @@
 	height: 2em;
 	width: 5%;
 }
-
+*/
 img.emoji {  
   margin: 0px !important;
   display: inline !important;
