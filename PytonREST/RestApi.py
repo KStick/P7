@@ -11,7 +11,7 @@ from flask_cors import CORS, cross_origin
 from Crypto import Random
 import re
 import base64
-import bcrypt
+import  bcrypt
 rndfile = Random.new()
 
 import psycopg2
@@ -231,13 +231,15 @@ def validateLogin():
 def CreateUser():
 
 	data = request.form
+	print data
 	username = data['username']
 	password = data['key']
 	email = data['email']
 	role = data['role']
 	salt = data['response']
 	try:
-		salt += bcrypt.gensalt(14)
+		password = bcrypt.hashpw(password.encode('utf8'),salt.encode('utf8'))
+		print password
 		print salt
 
 		conn = connect()
@@ -260,8 +262,7 @@ def CreateUser():
 def GenerateSalt():
 	data = request.form
 	username = ['username']
-	salt = rndfile.read(16)
-	salt = base64.b64encode(salt)
+	salt = bcrypt.gensalt(rounds=14)	
 	print(username)
 	print(salt)
 	conn = connect()

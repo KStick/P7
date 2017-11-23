@@ -52,9 +52,11 @@
                     'Access-Control-Allow-Origin': '*'
                 },
                 success: function(response) {
-                    var derivedKey = sjcl.misc.pbkdf2(password, response, 1000, 256);
-                    var key = sjcl.codec.base64.fromBits(derivedKey);
-                                
+                    //var derivedKey = sjcl.misc.pbkdf2(password, response, 1000, 256);
+                    //var key = sjcl.codec.base64.fromBits(derivedKey);
+                      var bitArray = sjcl.hash.sha256.hash(password + response)
+                      var key = sjcl.codec.base64.fromBits(bitArray)
+
                     $.ajax({data:{username, key, email, role, response},
 
                     type:"POST",
