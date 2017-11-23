@@ -8,11 +8,9 @@
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
-from Crypto import Random
 import re
 import base64
 import  bcrypt
-rndfile = Random.new()
 
 import psycopg2
 
