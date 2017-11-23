@@ -1,11 +1,18 @@
 ##TODO##
 #Fix redundancy such as conn in every function
+# pip install bcrypt | if dependency errors use:
+#				$ sudo apt-get install build-essential libffi-dev python-dev
+#pip install Flask
 
 
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
+from Crypto import Random
 import re
+import base64
+import bcrypt
+rndfile = Random.new()
 
 import psycopg2
 
@@ -26,7 +33,8 @@ def initdb():
 		cur.execute("""CREATE TABLE users( 
 						username TEXT UNIQUE NOT NULL, 
 						password TEXT NOT NULL, 
-						email TEXT NOT NULL);
+						email TEXT NOT NULL,
+						salt TEXT DEFAULT NULL);
 					""")
 	except Exception as e:
 		pass
@@ -224,14 +232,17 @@ def CreateUser():
 
 	data = request.form
 	username = data['username']
-	password = data['password']
+	password = data['key']
 	email = data['email']
 	role = data['role']
-
+	salt = data['response']
 	try:
+		salt += bcrypt.gensalt(14)
+		print salt
+
 		conn = connect()
 		cur = conn.cursor()
-		query = "INSERT INTO users(username, password, email) " + "VALUES ('" + str(username) + "','" + str(password) + "','" + str(email) + "');"
+		query = "INSERT INTO users(username, password, email, salt) " + "VALUES ('" + str(username) + "','" + str(password) + "','" + str(email) + "','" + str(salt) + "');"
 		cur.execute(query)
 		conn.commit()
 		query = "INSERT INTO user_roles(username, role) " + "VALUES ('" + str(username) +"','" + str(role) + "') RETURNING role;"
@@ -242,4 +253,20 @@ def CreateUser():
 		conn.close()
 		return str(assigned_role)
 	except psycopg2.Error as e:
+		print e
 		return('username_taken')
+
+@app.route('/GenerateSalt', methods = ['POST'])
+def GenerateSalt():
+	data = request.form
+	username = ['username']
+	salt = rndfile.read(16)
+	salt = base64.b64encode(salt)
+	print(username)
+	print(salt)
+	conn = connect()
+	cur = conn.cursor()
+	#query = "UPDATE users SET salt ='" + str(salt) +"' WHERE username = '" + str(username) "';"
+	return salt; 
+
+
