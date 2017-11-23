@@ -19,11 +19,24 @@ button {
     vertical-align: middle;
 }
 
+#myTable{
+    min-width: 100%;
+}
+
+th:first-child {
+    width: 10%;
+}
+
+td:first-child {
+    width: 10%;
+}
+
 th, td {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
     cursor: pointer;
+    width: 30%;
 
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -45,7 +58,6 @@ tbody
 thead, tbody tr{
     display: table;
     width: 99.9%;
-    table-layout: fixed;
 }
 
 .main-body {
