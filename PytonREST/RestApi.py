@@ -229,7 +229,6 @@ def validateLogin():
 def CreateUser():
 
 	data = request.form
-	print data
 	username = data['username']
 	password = data['key']
 	email = data['email']
@@ -237,8 +236,6 @@ def CreateUser():
 	salt = data['response']
 	try:
 		password = bcrypt.hashpw(password.encode('utf8'),salt.encode('utf8'))
-		print password
-		print salt
 
 		conn = connect()
 		cur = conn.cursor()
@@ -261,8 +258,6 @@ def GenerateSalt():
 	data = request.form
 	username = ['username']
 	salt = bcrypt.gensalt(rounds=14)	
-	print(username)
-	print(salt)
 	conn = connect()
 	cur = conn.cursor()
 	#query = "UPDATE users SET salt ='" + str(salt) +"' WHERE username = '" + str(username) "';"
