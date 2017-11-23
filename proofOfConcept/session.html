@@ -65,16 +65,15 @@
             </canvas>
 		</div>
 
-		<div class = "chat-window-container">
-			<div class = "chat-window" id="chat-window">
-		        <input type="text" class = "chat-input" id="user-message"></textarea>
-                </input>
-                <button class = "send-message chat-page" id="send-message">
-                    Send
-                </button>        		
+		<div id="chat-container">
+			<textarea id="message-box"></textarea>
+			<div id="name-bar">
+				<button id="nav-bar">-</button> 
+			</div>
+			<div id="box">
 			</div>
 		</div>
-		
+	
 	</div>
 	
 <script>
@@ -154,21 +153,29 @@ function setSize() {
 
 		// chat functions
 
-		$("#send-message").click(function(){
-			var clientmsg = document.getElementById("user-message").value;
-			var username = getCookie("Username");
-			clientmsg = checkStandardEmojis(clientmsg);
-			var sessionID = getCookie("SessionID");
-			$.post("postchatlog.php", {username : username, text : clientmsg, sessionID : sessionID});
-			$('#user-message').val("", "");
-			return false;
+		$("#nav-bar").click(function() {
+		    if (document.getElementById("nav-bar").innerHTML == "-") {
+		    	minimizeChat();
+		    	document.getElementById("nav-bar").innerHTML = "+";
+		    }
+		    else {
+		    	maximizeChat();
+		    	document.getElementById("nav-bar").innerHTML = "-";
+		    }
 		});
 
 		setInterval(loadLog, 300);
 
-		$("#user-message").keyup(function(event){
+		$("#message-box").keyup(function(event){
 			if(event.keyCode == 13){
-				$("#send-message").click();
+				console.log(document.getElementById("message-box").value);
+				var message = document.getElementById("message-box").value;
+				var username = getCookie("Username");
+				var sessionID = getCookie("SessionID");
+				message = checkStandardEmojis(message);
+				$.post("postchatlog.php", {username : username, text : message, sessionID : sessionID});
+				$('#message-box').val("", "");
+
 			}
 		});
 
@@ -227,22 +234,21 @@ function setSize() {
 	//Loads the log to write the chat. This function is called at an interval
 	 function loadLog(){
 	 	twemoji.size = '72x72';
-        var oldscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height before the request
+       // var oldscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height before the request
         var sessionID = getCookie("SessionID");
         var path = "SessionsChatlogs/" + sessionID + ".html";
-        console.log(path);
         $.ajax({
             url: path,
             cache: false,
             success: function(html){
 
-                $("#chat-window").html(twemoji.parse(decodeEntities(html))); //Insert chat log into the #chatbox div   
+                //$("#box").html(twemoji.parse(decodeEntities(html))); //Insert chat log into the #chatbox div   
                 
                 //Auto-scroll           
-                var newscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height after the request
-                if(newscrollHeight > oldscrollHeight){
-                    $("#chat-window").animate({ scrollTop: newscrollHeight }, 'normal'); //Autoscroll to bottom of div
-                }               
+       //         var newscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height after the request
+         //       if(newscrollHeight > oldscrollHeight){
+           //       $("#chat-window").animate({ scrollTop: newscrollHeight }, 'normal'); //Autoscroll to bottom of div
+            //    }               
             },
         });
 
@@ -275,6 +281,24 @@ function setSize() {
 		usermsg = usermsg.replace(':D', '&#x1f603;');
 		usermsg = usermsg.replace(';)', '😑');
 		return usermsg;	
+	}
+</script>
+
+
+<script type="text/javascript">
+	function minimizeChat() {
+		document.getElementById("chat-container").style.height = '2.8%';
+		document.getElementById("message-box").style.display = "none";
+		document.getElementById("box").style.display = "none";
+	}
+</script>
+
+<script type="text/javascript">
+	function maximizeChat()  {
+		document.getElementById("chat-container").style.height = '30%';
+		document.getElementById("message-box").style.display = "block";
+		document.getElementById("box").style.display = "block";
+
 	}
 </script>
 
