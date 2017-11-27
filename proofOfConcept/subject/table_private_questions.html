@@ -37,12 +37,15 @@
         var contentToPrint;
         var tableHTML = "<tbody id='tutorTableBody'>";
         for (var i = 0; i < text.length-1; i++) {
-            if (i%7==0) {
+            if (i%8==0) {
                 tableHTML += "<tr onclick='goToSession(" + Number(text[i].replace(/[[(\s]/g, '')) + ")'>";
-                for (var j = i; j < i+7; j++) {
-                    if(j%7==0 || j%7==5 || j%7==6){/*do nothing*/}
-                    else if(j%7==1 || j%7==2){
+                for (var j = i; j < i+8; j++) {
+                    if(j%8==0 || j%8==5 || j%8==6 || j%8==7){/*do nothing*/}
+                    else if(j%8==1 || j%8==2){
                         tableHTML += "<td> " + text[j].replace(/(['])/g, ''); + " </td>" ;
+                    }
+                    else if(j%8==7){
+                        tableHTML += "<td> " + text[j].replace(/([)])/g, ''); + " </td>" ;
                     }
                     else{
                         tableHTML += "<td> " + text[j] + " </td>" ;

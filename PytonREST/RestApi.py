@@ -136,8 +136,7 @@ def Questions():
 		access = data['access']
 		conn = connect()
 		cur = conn.cursor()
-		print(access)
-		query = "INSERT INTO questions(username, subject, question, public)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "'," + str(str(access)=='public') + ") RETURNING id;"
+		query = "INSERT INTO questions(username, subject, question, public, count)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "'," + str(str(access)=='public') + ", 1) RETURNING id;"
 		cur.execute(query)
 		sessionID = cur.fetchone()[0]
 		conn.commit()
@@ -185,6 +184,31 @@ def QuestionAnswered():
 	conn.close()
 	return "what are you doing here"
 	
+@app.route('/JoinSession', methods = ["POST"])
+def JoinSession():
+	data = request.form
+	sessionid = data['id']
+	conn = connect()
+	cur = conn.cursor()
+	query = "UPDATE questions SET count = count+1 WHERE id = " + str(sessionid) + ";"
+	cur.execute(query)
+	conn.commit()
+	cur.close()
+	conn.close()
+	return "what are you doing here"
+
+@app.route('/LeaveSession', methods = ["POST"])
+def LeaveSession():
+	data = request.form
+	sessionid = data['id']
+	conn = connect()
+	cur = conn.cursor()
+	query = "UPDATE questions SET count = count-1 WHERE id = " + str(sessionid) + ";"
+	cur.execute(query)
+	conn.commit()
+	cur.close()
+	conn.close()
+	return "what are you doing here"
 
 @app.route('/InsertRole', methods = ['POST'])
 def insertRole():
