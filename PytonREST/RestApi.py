@@ -152,11 +152,10 @@ def Questions():
 		cur.execute(query)
 		question = cur.fetchall()
 		pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"
-		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))
 		conn.commit()
 		cur.close()
 		conn.close()
-		return str(question)
+		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))[:-2]
 
 	elif data['submit']=='no' and data['access']=='private':
 		conn = connect()
@@ -165,11 +164,10 @@ def Questions():
 		cur.execute(query)
 		question = cur.fetchall()
 		pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"
-		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))
 		conn.commit()
 		cur.close()
 		conn.close()
-		return str(question)
+		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))[:-2]
 
 	else:
 		return "What are you trying to do?"
