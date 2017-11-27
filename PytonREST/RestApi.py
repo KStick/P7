@@ -152,11 +152,10 @@ def Questions():
 		cur.execute(query)
 		question = cur.fetchall()
 		pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"
-		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))
 		conn.commit()
 		cur.close()
 		conn.close()
-		return str(question)
+		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))[:-2]
 
 	elif data['submit']=='no' and data['access']=='private':
 		conn = connect()
@@ -165,11 +164,10 @@ def Questions():
 		cur.execute(query)
 		question = cur.fetchall()
 		pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"
-		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))
 		conn.commit()
 		cur.close()
 		conn.close()
-		return str(question)
+		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))[:-2]
 
 	else:
 		return "What are you trying to do?"
@@ -212,18 +210,25 @@ def validateLogin():
 	username = data['username']
 	password = data['password']
 
+
 	conn = connect()
 	cur = conn.cursor()
-	query = "SELECT role FROM users NATURAL JOIN user_roles WHERE users.username ='" + str(username) + "' " + "AND users.password = '" + str(password) + "';"
+	query = "SELECT role,password FROM users NATURAL JOIN user_roles WHERE users.username ='" + str(username) + "';"
 	cur.execute(query)
-	role = cur.fetchone();
+	result = cur.fetchone();
 	conn.commit
 	cur.close()
 	conn.close()
-	if role != None:
-		return role[0]
+	password = result[1]
+	salt = GetSalt()
+	hashPassword = bcrypt.hashpw(bytes(password),bytes(salt))
+	if bcrypt.checkpw(bytes(password),hashPassword):
+		if result[0] != None:
+			return result[0]
+		else:
+			return "NULL"
 	else:
-		return "NULL"
+		return "Login error"
 
 @app.route('/CreateUser', methods = ['POST'])
 def CreateUser():
@@ -233,7 +238,7 @@ def CreateUser():
 	password = data['key']
 	email = data['email']
 	role = data['role']
-	salt = data['response']
+	salt = data['salt']
 	try:
 		password = bcrypt.hashpw(password.encode('utf8'),salt.encode('utf8'))
 
@@ -256,11 +261,24 @@ def CreateUser():
 @app.route('/GenerateSalt', methods = ['POST'])
 def GenerateSalt():
 	data = request.form
-	username = ['username']
+	username = data['username']
 	salt = bcrypt.gensalt(rounds=14)	
 	conn = connect()
 	cur = conn.cursor()
 	#query = "UPDATE users SET salt ='" + str(salt) +"' WHERE username = '" + str(username) "';"
 	return salt; 
+
+@app.route('/GetSalt', methods = ['POST'])
+def GetSalt():
+	data = request.form
+	username = data['username']
+	conn = connect()
+	cur = conn.cursor()
+	query = "SELECT salt FROM users WHERE username ='" + str(username) + "';"
+	cur.execute(query)
+	salt = cur.fetchone()
+	cur.close()
+	conn.close()
+	return salt[0]
 
 

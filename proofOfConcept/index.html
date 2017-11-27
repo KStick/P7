@@ -3,6 +3,7 @@
 	<link rel="stylesheet" type="text/css" href="loginPageCSS.css">
     <link rel="stylesheet" type="text/css" href="globalCSS.css">
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script> 
+    <script src="sjcl.js"></script>
 </head>
 
 
@@ -37,32 +38,48 @@
     function validateLogin(username, password){
         //window.location.replace("example.com");
         console.log(username);
-        $.ajax({data:{username, password},
+         $.ajax({data:{username},
                 type:"POST",
-                url:'http://localhost:5000/validateLogin',
+                url:'http://localhost:5000/GetSalt',
                 headers: {
                     'Access-Control-Allow-Origin': '*'
                 },
-                success: function(response) {
-                    if (response=="tutor") {
-                        document.cookie="Username = " + username + ";path=/" 
-                        window.location.href = "./subject/tutor_queue.html"
-                    }
-                    else if (response=="student") {
-                        document.cookie="Username = " + username + ";path=/" 
-                        window.location.href = "./subject/student_subject.html"
-                    }
-                    else{
-                        alert("Username or password incorrect!");
-                    }
-                    console.log(response);
-    
-                },
-                error: function(error){
-                    console.log(error);
-                }
-            })
-    }
+            success: function(response) {  
+                var bitArray = sjcl.hash.sha256.hash(password + response)
+                var password = sjcl.codec.base64.fromBits(bitArray)  
+
+            $.ajax({data:{username, password},
+                    type:"POST",
+                    url:'http://localhost:5000/validateLogin',
+                    headers: {
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response=="tutor") {
+                            document.cookie="Username = " + username + ";path=/" 
+                            window.location.href = "./subject/tutor_queue.html"
+                        }
+                        else if (response=="student") {
+                            document.cookie="Username = " + username + ";path=/" 
+                            window.location.href = "./subject/student_subject.html"
+                        }
+                        else{
+                            alert("Username or password incorrect!");
+                        }
+                        console.log(response);
+        
+                        },
+                        error: function(error){
+                            console.log(error);
+                        }
+                })
+        },
+        error: function(error){
+             console.log(error);
+        }
+    })
+}
 
 
 </script>
