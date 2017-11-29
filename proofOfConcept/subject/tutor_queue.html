@@ -7,7 +7,7 @@
 
 
 <html>
-<body onunload="logOutTimer()">
+<body>
   	<div class = "main-body">
 		<div class = "top-banner">
             <p class = "top-banner-text"> general content </p>
@@ -43,13 +43,6 @@
     function logOut(){
     	document.cookie = "Username " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
     	window.location.href = "../";
-    }
-
-    function logOutTimer(){
-        var d = new Date();
-        d.setTime(d.getTime() + (30 * 60 * 1000));
-        var expires = "expires="+d.toUTCString();
-        document.cookie="Username = " + getCookie('Username') + ";" + expires + ";path=/" 
     }
 </script>
 
