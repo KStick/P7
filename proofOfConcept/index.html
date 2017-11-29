@@ -51,7 +51,7 @@
                 //console.log(bitArray)
                 var HashedPassword = sjcl.codec.base64.fromBits(bitArray)
                 
-                console.log("LOGIN HASH: " + HashedPassword);
+                //console.log("LOGIN HASH: " + HashedPassword);
 
                 $.ajax({data:{username, HashedPassword},
                         type:"POST",

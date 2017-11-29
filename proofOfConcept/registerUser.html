@@ -57,8 +57,8 @@
                     var salt = response
                     var bitArray = sjcl.hash.sha256.hash(salt + password)
                     var key = sjcl.codec.base64.fromBits(bitArray)
-                    console.log(salt);
-                    console.log(key);
+                    //console.log(salt);
+                    //console.log(key);
                     $.ajax({data:{username, key, email, role, salt},
 
                     type:"POST",
@@ -79,7 +79,7 @@
                         else if(response=="username_taken"){
                             alert('Username is taken');
                         }
-                        console.log(response);
+                        //console.log(response);
     
                     },
                     error: function(error){
