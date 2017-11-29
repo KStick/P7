@@ -10,32 +10,8 @@
 
 <html>
 
-
-<script type="text/javascript">
-	function deleteSessionCookie() {
-		document.cookie = "SessionID " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-	}
-
-	function leaveSession(){
-		userLeavesChat();
-		deleteSessionCookie();
-	}
-</script>
-
 <body onunload="leaveSession()">
  
-   <script>
-	function getCookie(name) {
- 	    var value = "; " + document.cookie;
-	    var parts = value.split("; " + name + "=");
-	    if (parts.length == 2) return parts.pop().split(";").shift();
-	}
-    </script>
-
-   <script>
-	var session = getCookie("SessionID");
-	$.post("Session.php", {id : session});
-    </script>
 
 	<div class = "main-body">
         <div class = "left-container">
@@ -77,58 +53,14 @@
 	
 	</div>
 	
-<script>
-	function saveWhiteboard() {
-		var ID = getCookie("SessionID");
-		var tmp = JSON.stringify(canvas.toJSON());
-		console.log(tmp);
-		$.post("Post.php", {sessionID : ID, data : tmp});
-	}
-</script>
 
-<script>
-	function loadWhiteboard() {
-		var ID = getCookie("SessionID");
-		$(function(){
-   			$.get( "Sessions/".concat(ID), function( data ) {
-					canvas.loadFromJSON(decodeEntities(data), function() {
-   			 		canvas.renderAll();
-				}); 
-   			});
-		});
-	}
-</script>
-
-<script>
-	function decodeEntities(encodedString) {
-    	var textArea = document.createElement('textarea');
-    	textArea.innerHTML = encodedString;
-    	return textArea.value;
-	}
-</script>
-
-<script>
-function setSize() {
-        var height = $(window).height() * 0.7;
-        var width = $(window).width() * 0.7;
-        console.log('height: ' + height);
-        console.log('width: ' + width);
-        
-        canvas.setDimensions({
-            width: width,
-            height: height
-        });
-        
-        //canvas.calcOffset();
-        canvas.renderAll();
-    };
-</script>
 
 <script>
     var width = 0;
 	var height = 0;
 	var canvas;
 	$(document).ready(function(){
+
 		window.onload = userJoinsChat();
 		// whiteboard functions
 		width = document.getElementById("whiteboard").offsetWidth;
@@ -140,8 +72,7 @@ function setSize() {
 		loadWhiteboard();
 		
 		setInterval(loadWhiteboard, 1000);
-		canvas.on('path:created', function(e){
-			console.log("path created");	
+		canvas.on('path:created', function(e){	
 			saveWhiteboard();
 
 		});	
@@ -167,7 +98,6 @@ function setSize() {
 
 		$("#message-box").keyup(function(event){
 			if(event.keyCode == 13){
-				console.log(document.getElementById("message-box").value);
 				var message = document.getElementById("message-box").value;
 				var username = getCookie("Username");
 				var sessionID = getCookie("SessionID");
@@ -177,8 +107,6 @@ function setSize() {
 
 			}
 		});
-
-
 
 	})
 	var drawingModeEL = document.getElementById("drawingMode"),
@@ -221,14 +149,60 @@ function setSize() {
 		canvas.freeDrawingBrush.color = this.value;
 	}
 
-
 </script>
 
-
-
 <script type="text/javascript">
+	function deleteSessionCookie() {
+		document.cookie = "SessionID " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	}
 
+	function leaveSession(){
+		userLeavesChat();
+		deleteSessionCookie();
+	}
 
+	function getCookie(name) {
+		var value = "; " + document.cookie;
+	    var parts = value.split("; " + name + "=");
+	    if (parts.length == 2) 
+	    	return parts.pop().split(";").shift();
+	}
+
+	function saveWhiteboard() {
+		var ID = getCookie("SessionID");
+		var tmp = JSON.stringify(canvas.toJSON());
+		$.post("Post.php", {sessionID : ID, data : tmp});
+	}
+
+	function loadWhiteboard() {
+		var ID = getCookie("SessionID");
+		$(function(){
+   			$.get( "Sessions/".concat(ID), function( data ) {
+					canvas.loadFromJSON(decodeEntities(data), function() {
+   			 		canvas.renderAll();
+				}); 
+   			});
+		});
+	}
+
+	function decodeEntities(encodedString) {
+    	var textArea = document.createElement('textarea');
+    	textArea.innerHTML = encodedString;
+    	return textArea.value;
+	}
+
+	function setSize() {
+        var height = $(window).height();
+        var width = $(window).width();
+        
+        canvas.setDimensions({
+            width: width,
+            height: height
+        });
+        
+        //canvas.calcOffset();
+        canvas.renderAll();
+    };
 
 	//Loads the log to write the chat. This function is called at an interval
 	 function loadLog(){
@@ -241,7 +215,7 @@ function setSize() {
             cache: false,
             success: function(html){
 
-                //$("#box").html(twemoji.parse(decodeEntities(html))); //Insert chat log into the #chatbox div   
+                $("#box").html(twemoji.parse(decodeEntities(html))); //Insert chat log into the #chatbox div   
                 
                 //Auto-scroll           
        //         var newscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height after the request
@@ -253,53 +227,42 @@ function setSize() {
 
   
     }	
-</script>
-
-
-<script type="text/javascript">
 	function userJoinsChat() {
 		var username = getCookie("Username");
 		var sessionID = getCookie("SessionID");
 		var clientmsg = username + " has joined the chat!";
 		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
-</script>
 
-<script type="text/javascript">
 	function userLeavesChat() {
 		var username = getCookie("Username");
 		var sessionID = getCookie("SessionID");
 		var clientmsg = username + " has left the chat!";
 		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
-</script>
 
-<script type="text/javascript">
 	function checkStandardEmojis(usermsg) {		
 		usermsg = usermsg.replace(':D', '&#x1f603;');
 		usermsg = usermsg.replace(';)', '😑');
 		return usermsg;	
 	}
-</script>
 
-
-<script type="text/javascript">
 	function minimizeChat() {
 		document.getElementById("chat-container").style.height = '2.8%';
 		document.getElementById("message-box").style.display = "none";
 		document.getElementById("box").style.display = "none";
 	}
-</script>
 
-<script type="text/javascript">
 	function maximizeChat()  {
 		document.getElementById("chat-container").style.height = '30%';
 		document.getElementById("message-box").style.display = "block";
 		document.getElementById("box").style.display = "block";
 
 	}
-</script>
 
+	var session = getCookie("SessionID");
+	$.post("Session.php", {id : session});
+</script>
 
 </body>
 </html>
