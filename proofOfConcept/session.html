@@ -15,9 +15,14 @@
 	function deleteSessionCookie() {
 		document.cookie = "SessionID " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 	}
+
+	function leaveSession(){
+		userLeavesChat();
+		deleteSessionCookie();
+	}
 </script>
 
-<body onunload="deleteSessionCookie()">
+<body onunload="leaveSession()">
  
    <script>
 	function getCookie(name) {
@@ -31,10 +36,6 @@
 	var session = getCookie("SessionID");
 	$.post("Session.php", {id : session});
     </script>
-
- 	
-
-
 
 	<div class = "main-body">
         <div class = "left-container">
@@ -128,9 +129,7 @@ function setSize() {
 	var height = 0;
 	var canvas;
 	$(document).ready(function(){
-
 		window.onload = userJoinsChat();
-		window.addEventListener("unload", userLeavesChat);
 		// whiteboard functions
 		width = document.getElementById("whiteboard").offsetWidth;
 		height = document.getElementById("whiteboard").offsetHeight;
@@ -259,7 +258,6 @@ function setSize() {
 
 <script type="text/javascript">
 	function userJoinsChat() {
-
 		var username = getCookie("Username");
 		var sessionID = getCookie("SessionID");
 		var clientmsg = username + " has joined the chat!";
