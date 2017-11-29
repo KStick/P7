@@ -259,9 +259,10 @@ def validateLogin():
 	username = data['username']
 	password = data['HashedPassword']
 
-
+	print 0
 	conn = connect()
 	cur = conn.cursor()
+	print 1
 	query = "SELECT role,password FROM users NATURAL JOIN user_roles WHERE users.username ='" + str(username) + "';"
 	cur.execute(query)
 	result = cur.fetchone();
@@ -269,7 +270,9 @@ def validateLogin():
 	cur.close()
 	conn.close()
 	databasePassword = result[1]
+	print 2
 	salt = GetSalt()
+	print 3
 	inputPassword = bcrypt.hashpw(bytes(password),bytes(salt))
 	print "DATABASE DATA:  " + databasePassword
 	print "INPUT PASSWORD: " + inputPassword
@@ -331,6 +334,8 @@ def GetSalt():
 	salt = cur.fetchone()
 	cur.close()
 	conn.close()
+	if salt == None:
+		return "usernameNotExist"	
 	return salt[0]
 
 

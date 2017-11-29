@@ -25,7 +25,7 @@
                     <input type = "password" placeholder="Insert password..." id="password" required>
                     <input type="submit" value="login">
                     <div class="new-user-container">
-                        <p>New user? <a href="/registerUser.html">click here</a></p>
+                        <p>New user? <a href="./registerUser.html">click here</a></p>
                     </div>
                 </form>
             </div>
@@ -45,39 +45,44 @@
                 headers: {
                     'Access-Control-Allow-Origin': '*'
                 },
-            success: function(response) {  
-                salt = response
-                var bitArray = sjcl.hash.sha256.hash(salt + inputPassword)
-                //console.log(bitArray)
-                var HashedPassword = sjcl.codec.base64.fromBits(bitArray)
-                
-                console.log("LOGIN HASH: " + HashedPassword);
+            success: function(response) {
+                if (response != "usernameNotExist"){
+                    salt = response
+                    var bitArray = sjcl.hash.sha256.hash(salt + inputPassword)
+                    //console.log(bitArray)
+                    var HashedPassword = sjcl.codec.base64.fromBits(bitArray)
+                    
+                    console.log("LOGIN HASH: " + HashedPassword);
 
-                $.ajax({data:{username, HashedPassword},
-                        type:"POST",
-                        url:'http://localhost:5000/validateLogin',
-                        headers: {
-                            'Access-Control-Allow-Origin': '*'
-                        },
-                        success: function(response) {
-                            if (response=="tutor") {
-                                document.cookie="Username = " + username + ";path=/" 
-                                window.location.href = "./subject/tutor_queue.html"
-                            }
-                            else if (response=="student") {
-                                document.cookie="Username = " + username + ";path=/" 
-                                window.location.href = "./subject/student_subject.html"
-                            }
-                            else{
-                                alert("Username or password incorrect!");
-                            }
-                            console.log(response);
-            
+                    $.ajax({data:{username, HashedPassword},
+                            type:"POST",
+                            url:'http://localhost:5000/validateLogin',
+                            headers: {
+                                'Access-Control-Allow-Origin': '*'
                             },
-                            error: function(error){
-                                    console.log(error);
-                            }
-                })
+                            success: function(response) {
+                                if (response=="tutor") {
+                                    document.cookie="Username = " + username + ";path=/" 
+                                    window.location.href = "./subject/tutor_queue.html"
+                                }
+                                else if (response=="student") {
+                                    document.cookie="Username = " + username + ";path=/" 
+                                    window.location.href = "./subject/student_subject.html"
+                                }
+                                else{
+                                    alert("Username or password incorrect!");
+                                }
+                                console.log(response);
+                
+                                },
+                                error: function(error){
+                                        console.log(error);
+                                }
+                    })
+                }
+                else {
+                    alert("Username does not exist!");
+                }
             },
         error: function(error){
              console.log(error);
