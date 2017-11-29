@@ -54,9 +54,11 @@
                 success: function(response) {
                     //var derivedKey = sjcl.misc.pbkdf2(password, response, 1000, 256);
                     //var key = sjcl.codec.base64.fromBits(derivedKey);
-                      var salt = response
-                      var bitArray = sjcl.hash.sha256.hash(salt + password)
-                      var key = sjcl.codec.base64.fromBits(bitArray)
+                    var salt = response
+                    var bitArray = sjcl.hash.sha256.hash(salt + password)
+                    var key = sjcl.codec.base64.fromBits(bitArray)
+                    console.log(salt);
+                    console.log(key);
                     $.ajax({data:{username, key, email, role, salt},
 
                     type:"POST",
@@ -65,6 +67,7 @@
                     'Access-Control-Allow-Origin': '*'
                 },
                     success: function(response) {
+                        //console.log("Register key : " + key)
                         if (response=="tutor") {
                             document.cookie="Username = " + username + ";path=/" 
                             window.location.href = "./subject/tutor_queue.html"

@@ -161,7 +161,7 @@ def Questions():
 		access = data['access']
 		conn = connect()
 		cur = conn.cursor()
-		query = "INSERT INTO questions(username, subject, question, public, count)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "'," + str(str(access)=='public') + ", 1) RETURNING id;"
+		query = "INSERT INTO questions(username, subject, question, public, count)" + " VALUES('" + str(username) + "','" + str(subject) + "','" + str(question) + "'," + str(str(access)=='public') + ", 1) RETURNING question_id;"
 		cur.execute(query)
 		sessionID = cur.fetchone()[0]
 		conn.commit()
@@ -257,7 +257,7 @@ def validateLogin():
 
 	data = request.form
 	username = data['username']
-	password = data['password']
+	password = data['HashedPassword']
 
 
 	conn = connect()
@@ -268,10 +268,13 @@ def validateLogin():
 	conn.commit
 	cur.close()
 	conn.close()
-	password = result[1]
+	databasePassword = result[1]
 	salt = GetSalt()
-	hashPassword = bcrypt.hashpw(bytes(password),bytes(salt))
-	if bcrypt.checkpw(bytes(password),hashPassword):
+	inputPassword = bcrypt.hashpw(bytes(password),bytes(salt))
+	print "DATABASE DATA:  " + databasePassword
+	print "INPUT PASSWORD: " + inputPassword
+	print databasePassword==inputPassword
+	if databasePassword == inputPassword:
 		if result[0] != None:
 			return result[0]
 		else:
@@ -289,7 +292,7 @@ def CreateUser():
 	role = data['role']
 	salt = data['salt']
 	try:
-		password = bcrypt.hashpw(password.encode('utf8'),salt.encode('utf8'))
+		password = bcrypt.hashpw(bytes(password),bytes(salt))
 
 		conn = connect()
 		cur = conn.cursor()
