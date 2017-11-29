@@ -27,6 +27,7 @@ CORS(app)
 def initdb():
 	conn = connect()
 	cur = conn.cursor()
+	
 	try:
 		cur.execute("""CREATE TABLE users( 
 						username TEXT UNIQUE NOT NULL, 
@@ -36,24 +37,28 @@ def initdb():
 					""")
 	except Exception as e:
 		pass
+	
 	try:
 		cur.execute("""CREATE TABLE questions(
-						id serial PRIMARY KEY,
+						question_id serial PRIMARY KEY,
 						username TEXT NOT NULL REFERENCES users(username) ON UPDATE CASCADE , 
 						subject TEXT NOT NULL,
 						question TEXT NOT NULL,
 						date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP::TIMESTAMP(0),
 						answered BOOLEAN DEFAULT false,
-						public BOOLEAN NOT NULL); 
+						public BOOLEAN NOT NULL,
+						count Integer NOT NULL); 
 					""")
 	except Exception as e:
 		pass
+	
 	try:
 		cur.execute("""CREATE TABLE roles(
 						role TEXT UNIQUE PRIMARY KEY NOT NULL); 
 					""")
 	except Exception as e:
 		pass
+	
 	try:
 		cur.execute("""CREATE TABLE user_roles(
 						username TEXT NOT NULL UNIQUE REFERENCES users(username) ON UPDATE CASCADE, 
@@ -61,6 +66,22 @@ def initdb():
 					""")
 	except Exception as e:
 		pass
+
+	try:
+		cur.execute("""CREATE TABLE session_history(
+						username TEXT NOT NULL UNIQUE REFERENCES users(username) ON UPDATE CASCADE, 
+						question_id Integer REFERENCES questions(question_id));
+					""")
+	except Exception as e:
+		pass
+
+	try:
+		cur.execute("""CREATE TABLE tutor_subject(
+			role TEXT NOT NULL REFERENCES roles(role),
+			subject TEXT NOT NULL); 
+			""")
+	except Exception as e:
+		pass	
 	conn.commit()
 	cur.close()
 	conn.close()
@@ -91,6 +112,10 @@ def seedData():
 	cur.execute("""INSERT INTO roles(role) VALUES('toddler');""")
 	cur.execute("""INSERT INTO user_roles(username,role) VALUES('henry','student');""")
 	cur.execute("""INSERT INTO user_roles(username,role) VALUES('Finn','tutor');""")
+	cur.execute("""INSERT INTO tutor_subject(role,subject) VALUES('tutor', 'Mathematics');""")
+	cur.execute("""INSERT INTO tutor_subject(role,subject) VALUES('tutor', 'Software');""")
+	cur.execute("""INSERT INTO tutor_subject(role,subject) VALUES('tutor', 'Biology');""")
+	cur.execute("""INSERT INTO tutor_subject(role,subject) VALUES('tutor', 'Medicine');""")
 	conn.commit()
 	cur.close()
 	conn.close()
