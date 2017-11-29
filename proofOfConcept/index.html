@@ -51,9 +51,6 @@
                     var bitArray = sjcl.hash.sha256.hash(salt + inputPassword)
                     //console.log(bitArray)
                     var HashedPassword = sjcl.codec.base64.fromBits(bitArray)
-                    
-                    console.log("LOGIN HASH: " + HashedPassword);
-
                     $.ajax({data:{username, HashedPassword},
                             type:"POST",
                             url:'http://localhost:5000/validateLogin',
