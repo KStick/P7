@@ -36,6 +36,7 @@ def initdb():
 						salt TEXT DEFAULT NULL);
 					""")
 	except Exception as e:
+		print "users error"
 		pass
 	
 	try:
@@ -50,6 +51,7 @@ def initdb():
 						count Integer NOT NULL); 
 					""")
 	except Exception as e:
+		print "questions error:"
 		pass
 	
 	try:
@@ -57,6 +59,7 @@ def initdb():
 						role TEXT UNIQUE PRIMARY KEY NOT NULL); 
 					""")
 	except Exception as e:
+		print "roles error:"
 		pass
 	
 	try:
@@ -65,6 +68,7 @@ def initdb():
 						role TEXT REFERENCES roles(role));
 					""")
 	except Exception as e:
+		print "user_roles error: "
 		pass
 
 	try:
@@ -73,14 +77,16 @@ def initdb():
 						question_id Integer REFERENCES questions(question_id));
 					""")
 	except Exception as e:
+		print "Session_history error : "
 		pass
 
 	try:
 		cur.execute("""CREATE TABLE tutor_subject(
-			role TEXT NOT NULL REFERENCES roles(role),
+			username TEXT NOT NULL REFERENCES users(username),
 			subject TEXT NOT NULL); 
 			""")
 	except Exception as e:
+		print "Tutor table error"
 		pass	
 	conn.commit()
 	cur.close()
@@ -90,10 +96,10 @@ def initdb():
 def seedData():
 	conn = connect()
 	cur = conn.cursor()
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('henry','123','123@a123.com');""")
+	cur.execute("""INSERT INTO users(username, password,email, salt) VALUES('henry','$2b$14$dgelyw4eIDf41V.uQ8fyzehy3jtAArO.nMSMxxzDCir/9Dd15mlxO','123@a123.com', '$2b$14$dgelyw4eIDf41V.uQ8fyze');""")
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('pedro','123','123@a123.com');""")
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('Kenneth','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Finn','123','123@a123.com');""")
+	cur.execute("""INSERT INTO users(username, password,email, salt) VALUES('Finn','$2b$14$bOi4M43fiPTTQ3yUmUdB4eJ5geRB9GDNIKDM777/RNZN/0A4v7vTq','123@a123.com', '$2b$14$bOi4M43fiPTTQ3yUmUdB4e');""")
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('Max','123','123@a123.com');""")
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('Morgan','123','123@a123.com');""")
 	cur.execute("""INSERT INTO users(username, password,email) VALUES('Henrik Vanderheim','123','123@a123.com');""")
@@ -112,10 +118,9 @@ def seedData():
 	cur.execute("""INSERT INTO roles(role) VALUES('toddler');""")
 	cur.execute("""INSERT INTO user_roles(username,role) VALUES('henry','student');""")
 	cur.execute("""INSERT INTO user_roles(username,role) VALUES('Finn','tutor');""")
-	cur.execute("""INSERT INTO tutor_subject(role,subject) VALUES('tutor', 'Mathematics');""")
-	cur.execute("""INSERT INTO tutor_subject(role,subject) VALUES('tutor', 'Software');""")
-	cur.execute("""INSERT INTO tutor_subject(role,subject) VALUES('tutor', 'Biology');""")
-	cur.execute("""INSERT INTO tutor_subject(role,subject) VALUES('tutor', 'Medicine');""")
+	cur.execute("""INSERT INTO tutor_subject(username, subject) VALUES('Finn', 'Mathematics');""")
+	cur.execute("""INSERT INTO tutor_subject(username, subject) VALUES('Finn', 'Software');""")
+	cur.execute("""INSERT INTO tutor_subject(username, subject) VALUES('Finn', 'Biology');""")
 	conn.commit()
 	cur.close()
 	conn.close()
@@ -129,7 +134,8 @@ def hello_world():
 def hello():
     return 'Hello, World'
 
-#Make it a bit more beautiful to look at. For example fix append
+
+
 @app.route('/getquestion/<int:id>')
 def getQuestion(id):
 	conn = connect()
@@ -150,6 +156,13 @@ def getQuestion(id):
 	cur.close()
 	conn.close()
 	return str(returnData)
+
+#Work in progress
+#def getQuestion(id):
+#	conn = connect()
+#	cur = conn.cursor()
+#	query = """ SELECT questions.username,questions.question,questions.date_time,questions.count
+#				FROM"""
 
 @app.route('/Questions', methods = ['GET', 'POST'])
 def Questions():
@@ -259,9 +272,10 @@ def validateLogin():
 	username = data['username']
 	password = data['HashedPassword']
 
-
+	print 0
 	conn = connect()
 	cur = conn.cursor()
+	print 1
 	query = "SELECT role,password FROM users NATURAL JOIN user_roles WHERE users.username ='" + str(username) + "';"
 	cur.execute(query)
 	result = cur.fetchone();
@@ -269,11 +283,12 @@ def validateLogin():
 	cur.close()
 	conn.close()
 	databasePassword = result[1]
+	print 2
 	salt = GetSalt()
+	print 3
 	inputPassword = bcrypt.hashpw(bytes(password),bytes(salt))
-	print "DATABASE DATA:  " + databasePassword
-	print "INPUT PASSWORD: " + inputPassword
-	print databasePassword==inputPassword
+
+	#print databasePassword==inputPassword
 	if databasePassword == inputPassword:
 		if result[0] != None:
 			return result[0]
@@ -331,6 +346,8 @@ def GetSalt():
 	salt = cur.fetchone()
 	cur.close()
 	conn.close()
+	if salt == None:
+		return "usernameNotExist"	
 	return salt[0]
 
 
