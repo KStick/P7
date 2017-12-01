@@ -215,7 +215,7 @@ def QuestionAnswered():
 	sessionid = data['id']
 	conn = connect()
 	cur = conn.cursor()
-	query = "UPDATE questions SET answered = true WHERE id = " + str(sessionid) + ";"
+	query = "UPDATE questions SET answered = true WHERE question_id = " + str(sessionid) + ";"
 	cur.execute(query)
 	conn.commit()
 	cur.close()
@@ -228,7 +228,7 @@ def JoinSession():
 	sessionid = data['id']
 	conn = connect()
 	cur = conn.cursor()
-	query = "UPDATE questions SET count = count+1 WHERE id = " + str(sessionid) + ";"
+	query = "UPDATE questions SET count = count+1 WHERE question_id = " + str(sessionid) + ";"
 	cur.execute(query)
 	conn.commit()
 	cur.close()
@@ -241,7 +241,7 @@ def LeaveSession():
 	sessionid = data['id']
 	conn = connect()
 	cur = conn.cursor()
-	query = "UPDATE questions SET count = count-1 WHERE id = " + str(sessionid) + ";"
+	query = "UPDATE questions SET count = count-1 WHERE question_id = " + str(sessionid) + ";"
 	cur.execute(query)
 	conn.commit()
 	cur.close()
