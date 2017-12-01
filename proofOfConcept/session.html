@@ -4,18 +4,22 @@
 	<script src="//twemoji.maxcdn.com/2/twemoji.min.js?2.3.0"></script>
     <link rel="stylesheet" type="text/css" href="globalCSS.css">
     <link rel="stylesheet" type="text/css" href="session.css">
-	<script src="fabric.js"></script>
+	<script src="Scripts/fabric.js"></script>
+	<script src="Scripts/videoWorker.js" type="text/javascript"></script>
+	<script src="Scripts/WSVideoStream.js" type="text/javascript"></script>
 </head>
 
 
 <html>
 
 <body onunload="leaveSession()">
+	<input type="hidden" id="videoWSURL" value="ws://localhost:8080/websocket"></input>
  
 
 	<div class = "main-body">
         <div class = "left-container">
             <div class = "webcam-container top">
+            	<video autoplay="true" id="videoElement" width="320" height="240"> </video>
             </div>
             <div class = "menu-bar">
                 <button id = "drawingMode">
@@ -33,6 +37,7 @@
                 <input type="color" value="#005E7A" id="drawingColor"><br>
             </div>
             <div class = "webcam-container bottom">
+            	<image id="videoimage"> </canvas>
             </div>
         </div>
         
@@ -60,6 +65,30 @@
 	var height = 0;
 	var canvas;
 	$(document).ready(function(){
+		var image = document.getElementById('videoimage');
+		var video = document.getElementById('videoElement');
+		var wsVIDEO = document.getElementById("videoWSURL").value.toString();
+		var VideoRec = new WebSocket(wsVIDEO);
+ 
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+		 
+		if (navigator.getUserMedia) {       
+		    navigator.getUserMedia({video: true}, handleVideo, videoError);
+		}
+		 
+		function handleVideo(stream) {
+		    video.src = window.URL.createObjectURL(stream);
+		    localVideoRec = new WSVideoStream(stream, wsVIDEO);
+      		setTimeout(function () { localVideoRec.record(); }, 500);
+		}
+		 
+		function videoError(e) {
+		    Console.log(e);
+		}
+
+ 		VideoRec.onmessage = function (event){
+ 			image.src = event.data;
+ 		}
 
 		window.onload = userJoinsChat();
 		// whiteboard functions
@@ -102,7 +131,7 @@
 				var username = getCookie("Username");
 				var sessionID = getCookie("SessionID");
 				message = checkStandardEmojis(message);
-				$.post("postchatlog.php", {username : username, text : message, sessionID : sessionID});
+				$.post("Php/postchatlog.php", {username : username, text : message, sessionID : sessionID});
 				$('#message-box').val("", "");
 
 			}
@@ -171,7 +200,7 @@
 	function saveWhiteboard() {
 		var ID = getCookie("SessionID");
 		var tmp = JSON.stringify(canvas.toJSON());
-		$.post("Post.php", {sessionID : ID, data : tmp});
+		$.post("Php/Post.php", {sessionID : ID, data : tmp});
 	}
 
 	function loadWhiteboard() {
@@ -231,14 +260,14 @@
 		var username = getCookie("Username");
 		var sessionID = getCookie("SessionID");
 		var clientmsg = username + " has joined the chat!";
-		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
+		$.post("Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
 
 	function userLeavesChat() {
 		var username = getCookie("Username");
 		var sessionID = getCookie("SessionID");
 		var clientmsg = username + " has left the chat!";
-		$.post("postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
+		$.post("Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
 
 	function checkStandardEmojis(usermsg) {		
@@ -261,7 +290,7 @@
 	}
 
 	var session = getCookie("SessionID");
-	$.post("Session.php", {id : session});
+	$.post("Php/Session.php", {id : session});
 </script>
 
 </body>
