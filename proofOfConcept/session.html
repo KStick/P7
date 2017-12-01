@@ -207,7 +207,7 @@
 	//Loads the log to write the chat. This function is called at an interval
 	 function loadLog(){
 	 	twemoji.size = '72x72';
-       // var oldscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height before the request
+        var oldscrollHeight = $("#box").attr("scrollHeight") - 20; //Scroll height before the request
         var sessionID = getCookie("SessionID");
         var path = "SessionsChatlogs/" + sessionID + ".html";
         $.ajax({
@@ -218,10 +218,10 @@
                 $("#box").html(twemoji.parse(decodeEntities(html))); //Insert chat log into the #chatbox div   
                 
                 //Auto-scroll           
-       //         var newscrollHeight = $("#chat-window").attr("scrollHeight") - 20; //Scroll height after the request
-         //       if(newscrollHeight > oldscrollHeight){
-           //       $("#chat-window").animate({ scrollTop: newscrollHeight }, 'normal'); //Autoscroll to bottom of div
-            //    }               
+                var newscrollHeight = $("#box").attr("scrollHeight") - 20; //Scroll height after the request
+                if(newscrollHeight > oldscrollHeight){
+                  $("#box").animate({ scrollTop: newscrollHeight }, 'normal'); //Autoscroll to bottom of div
+               }               
             },
         });
 
