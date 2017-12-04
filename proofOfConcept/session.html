@@ -50,6 +50,7 @@
 		<div id="chat-container">
 			<textarea id="message-box"></textarea>
 			<div id="name-bar">
+				<p id="name-bar-p">Session Live Chat!</p>
 				<button id="nav-bar">-</button> 
 			</div>
 			<div id="box">
@@ -130,7 +131,6 @@
 				var message = document.getElementById("message-box").value;
 				var username = getCookie("Username");
 				var sessionID = getCookie("SessionID");
-				message = checkStandardEmojis(message);
 				$.post("Php/postchatlog.php", {username : username, text : message, sessionID : sessionID});
 				$('#message-box').val("", "");
 
@@ -235,22 +235,19 @@
 
 	//Loads the log to write the chat. This function is called at an interval
 	 function loadLog(){
-	 	twemoji.size = '72x72';
-        var oldscrollHeight = $("#box").attr("scrollHeight") - 20; //Scroll height before the request
         var sessionID = getCookie("SessionID");
+        var oldScrollHeight = $("#box")[0].scrollHeight;
         var path = "SessionsChatlogs/" + sessionID + ".html";
         $.ajax({
             url: path,
             cache: false,
             success: function(html){
 
-                $("#box").html(twemoji.parse(decodeEntities(html))); //Insert chat log into the #chatbox div   
-                
-                //Auto-scroll           
-                var newscrollHeight = $("#box").attr("scrollHeight") - 20; //Scroll height after the request
-                if(newscrollHeight > oldscrollHeight){
-                  $("#box").animate({ scrollTop: newscrollHeight }, 'normal'); //Autoscroll to bottom of div
-               }               
+               $("#box").html(decodeEntities(html)); //Insert chat log into the #chatbox div
+               if (oldScrollHeight < $("#box")[0].scrollHeight) {
+               	$("#box").scrollTop($("#box")[0].scrollHeight);			
+               }   
+                              
             },
         });
 
@@ -268,12 +265,6 @@
 		var sessionID = getCookie("SessionID");
 		var clientmsg = username + " has left the chat!";
 		$.post("Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
-	}
-
-	function checkStandardEmojis(usermsg) {		
-		usermsg = usermsg.replace(':D', '&#x1f603;');
-		usermsg = usermsg.replace(';)', '😑');
-		return usermsg;	
 	}
 
 	function minimizeChat() {
