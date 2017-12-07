@@ -100,7 +100,7 @@
 
 	function setSize() {
         var height = $(window).height();
-        var width = $(window).width();
+        var width = $(window).width() - 320;
         
         canvas.setDimensions({
             width: width,
@@ -212,6 +212,7 @@
 
 		$(window).resize(function() {
 			setSize();
+
 		}); 
 
 		// chat functions
