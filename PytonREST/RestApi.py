@@ -97,22 +97,10 @@ def seedData():
 	conn = connect()
 	cur = conn.cursor()
 	cur.execute("""INSERT INTO users(username, password,email, salt) VALUES('henry','$2b$14$dgelyw4eIDf41V.uQ8fyzehy3jtAArO.nMSMxxzDCir/9Dd15mlxO','123@a123.com', '$2b$14$dgelyw4eIDf41V.uQ8fyze');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('pedro','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Kenneth','123','123@a123.com');""")
 	cur.execute("""INSERT INTO users(username, password,email, salt) VALUES('Finn','$2b$14$bOi4M43fiPTTQ3yUmUdB4eJ5geRB9GDNIKDM777/RNZN/0A4v7vTq','123@a123.com', '$2b$14$bOi4M43fiPTTQ3yUmUdB4e');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Max','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Morgan','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Henrik Vanderheim','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Mark','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Reggie','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Jim Sterling','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('OnePunch','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Joseph','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Megaman','123','123@a123.com');""")
-	cur.execute("""INSERT INTO users(username, password,email) VALUES('Trent','123','123@a123.com');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('student');""")
-	cur.execute("""INSERT INTO roles(role) VALUES('math_teacher');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('tutor');""")
+	cur.execute("""INSERT INTO roles(role) VALUES('math_teacher');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('professor');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('high_school_teacher');""")
 	cur.execute("""INSERT INTO roles(role) VALUES('toddler');""")
@@ -124,15 +112,6 @@ def seedData():
 	conn.commit()
 	cur.close()
 	conn.close()
-
-
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-@app.route('/hello')
-def hello():
-    return 'Hello, World'
 
 
 
@@ -206,9 +185,6 @@ def Questions():
 		conn.close()
 		return re.sub(pattern=pattern, repl="\\1-\\2-\\3 \\4:\\5:\\6", string=str(question))[:-2]
 
-	else:
-		return "What are you trying to do?"
-
 @app.route('/QuestionAnswered', methods = ["POST"])
 def QuestionAnswered():
 	data = request.form
@@ -220,7 +196,7 @@ def QuestionAnswered():
 	conn.commit()
 	cur.close()
 	conn.close()
-	return "what are you doing here"
+	return ""
 	
 @app.route('/JoinSession', methods = ["POST"])
 def JoinSession():
@@ -233,7 +209,7 @@ def JoinSession():
 	conn.commit()
 	cur.close()
 	conn.close()
-	return "what are you doing here"
+	return ""
 
 @app.route('/LeaveSession', methods = ["POST"])
 def LeaveSession():
@@ -246,7 +222,7 @@ def LeaveSession():
 	conn.commit()
 	cur.close()
 	conn.close()
-	return "what are you doing here"
+	return ""
 
 @app.route('/InsertRole', methods = ['POST'])
 def insertRole():
@@ -263,6 +239,7 @@ def insertRole():
 	conn.commit()
 	cur.close()
 	conn.close()
+	return ""
 
 @app.route('/validateLogin', methods = {'POST'})
 def validateLogin():
@@ -350,4 +327,14 @@ def GetSalt():
 		return "usernameNotExist"	
 	return salt[0]
 
-
+@app.route('/GetRole/<string:username>')
+def GetRole(username):
+	conn = connect()
+	cur = conn.cursor()
+	query = "SELECT role FROM user_roles WHERE username = '" + str(username) + "';"
+	cur.execute(query)
+	role = cur.fetchone()[0]
+	conn.commit()
+	cur.close()
+	conn.close()
+	return role

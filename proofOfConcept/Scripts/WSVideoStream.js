@@ -10,7 +10,7 @@ var WORKER_PATH = 'Scripts/videoWorker.js';
 * Some hipster may read this and think that JavaScript is practically as fast as
 * C or C++, well, you are an idiot mister hipster
 **/
-function WSVideoStream(mediaStream, wsURL) {
+function WSVideoStream(mediaStream, wsURL, data, imageHTML) {
   var recording = false;
   var previousImage; //so that we do not burden the network or receiver with dupes.
   this.isRecording = function () {
@@ -21,9 +21,18 @@ function WSVideoStream(mediaStream, wsURL) {
   worker.postMessage({
     command: 'init',
     config: {
-      uri: wsURL
+      uri: wsURL,
+      data: data,
     }
   });
+
+  function messageHandler(msg) {
+    console.log(msg);
+    imageHTML.src = msg.data;
+  }
+
+  worker.addEventListener('message', messageHandler);
+
   this.record = function () {
     recording = true;
 

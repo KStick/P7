@@ -1,7 +1,6 @@
 <DOCTYPE html>
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="//twemoji.maxcdn.com/2/twemoji.min.js?2.3.0"></script>
     <link rel="stylesheet" type="text/css" href="globalCSS.css">
     <link rel="stylesheet" type="text/css" href="session.css">
 	<script src="Scripts/fabric.js"></script>
@@ -59,127 +58,6 @@
 	
 	</div>
 	
-
-
-<script>
-    var width = 0;
-	var height = 0;
-	var canvas;
-	$(document).ready(function(){
-		var image = document.getElementById('videoimage');
-		var video = document.getElementById('videoElement');
-		var wsVIDEO = document.getElementById("videoWSURL").value.toString();
-		var VideoRec = new WebSocket(wsVIDEO);
- 
-		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
-		 
-		if (navigator.getUserMedia) {       
-		    navigator.getUserMedia({video: true}, handleVideo, videoError);
-		}
-		 
-		function handleVideo(stream) {
-		    video.src = window.URL.createObjectURL(stream);
-		    localVideoRec = new WSVideoStream(stream, wsVIDEO);
-      		setTimeout(function () { localVideoRec.record(); }, 500);
-		}
-		 
-		function videoError(e) {
-		    Console.log(e);
-		}
-
- 		VideoRec.onmessage = function (event){
- 			image.src = event.data;
- 		}
-
-		window.onload = userJoinsChat();
-		// whiteboard functions
-		width = document.getElementById("whiteboard").offsetWidth;
-		height = document.getElementById("whiteboard").offsetHeight;
-		canvas = new fabric.Canvas("whiteboard" , {isDrawingMode: true});
-		canvas.setWidth(width);
-		canvas.setHeight(height);
-		canvas.freeDrawingBrush.color = drawingColor.value;		
-		loadWhiteboard();
-		
-		setInterval(loadWhiteboard, 1000);
-		canvas.on('path:created', function(e){	
-			saveWhiteboard();
-
-		});	
-
-		$(window).resize(function() {
-			setSize();
-		}); 
-
-		// chat functions
-
-		$("#nav-bar").click(function() {
-		    if (document.getElementById("nav-bar").innerHTML == "-") {
-		    	minimizeChat();
-		    	document.getElementById("nav-bar").innerHTML = "+";
-		    }
-		    else {
-		    	maximizeChat();
-		    	document.getElementById("nav-bar").innerHTML = "-";
-		    }
-		});
-
-		setInterval(loadLog, 300);
-
-		$("#message-box").keyup(function(event){
-			if(event.keyCode == 13){
-				var message = document.getElementById("message-box").value;
-				var username = getCookie("Username");
-				var sessionID = getCookie("SessionID");
-				$.post("Php/postchatlog.php", {username : username, text : message, sessionID : sessionID});
-				$('#message-box').val("", "");
-
-			}
-		});
-
-	})
-	var drawingModeEL = document.getElementById("drawingMode"),
-		clearEL = document.getElementById("clear"),
-		drawingLineWidthEL = document.getElementById("drawingLineWidth"),
-		drawingColorEL = document.getElementById("drawingColor");
-
-	clearEL.onclick = function() { 
-		canvas.clear();
-		saveWhiteboard();
-	}
-	
-	drawingModeEL.onclick = function() {
-		canvas.isDrawingMode = !canvas.isDrawingMode;
-		if(canvas.isDrawingMode){
-			drawingModeEL.innerHTML = "Cancel drawing mode";
-		}
-		else {
-			drawingModeEL.innerHTML = "Enter drawing mode";
-		}};
-	
-	document.getElementById('drawingModeSelector').onchange = function() {
-		if(this.value === ""){
-			<!--here we can make custom brushes-->
-		}	
-		else {
-			canvas.freeDrawingBrush = new fabric[this.value + 'Brush'](canvas);
-		}
-		
-		canvas.freeDrawingBrush.color = drawingColor.value;
-		canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEL.value,10) || 1;
-	}
-	
-	drawingLineWidthEL.onchange = function(){
-		canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
-		this.previousSibling.innerHTML= this.value;
-	}
-
-	drawingColor.onchange = function() {
-		canvas.freeDrawingBrush.color = this.value;
-	}
-
-</script>
-
 <script type="text/javascript">
 	function deleteSessionCookie() {
 		document.cookie = "SessionID " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -254,15 +132,11 @@
   
     }	
 	function userJoinsChat() {
-		var username = getCookie("Username");
-		var sessionID = getCookie("SessionID");
 		var clientmsg = username + " has joined the chat!";
 		$.post("Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
 
 	function userLeavesChat() {
-		var username = getCookie("Username");
-		var sessionID = getCookie("SessionID");
 		var clientmsg = username + " has left the chat!";
 		$.post("Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
@@ -282,6 +156,129 @@
 
 	var session = getCookie("SessionID");
 	$.post("Php/Session.php", {id : session});
+</script>
+
+<script>
+    var width = 0;
+	var height = 0;
+	var canvas;
+	var username = getCookie("Username");
+	var sessionID = getCookie("SessionID");
+
+	$(document).ready(function(){
+		var image = document.getElementById('videoimage');
+		var video = document.getElementById('videoElement');
+		var wsVIDEO = document.getElementById("videoWSURL").value.toString();
+
+
+ 		$.ajax({
+            url: "http://localhost:5000/GetRole/" + username,
+            cache: false,
+            success: function(response){
+            	console.log(response)
+            	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+		 
+				if (navigator.getUserMedia) {       
+				    navigator.getUserMedia({video: true}, handleVideo, videoError);
+				}
+					 
+				function handleVideo(stream) {
+				    video.src = window.URL.createObjectURL(stream);
+				    localVideoRec = new WSVideoStream(stream, wsVIDEO, response + "," + sessionID, image);
+			    	setTimeout(function () { localVideoRec.record(); }, 500);
+				}
+				 
+				function videoError(e) {
+				    Console.log(e);
+				}
+            },
+        });
+
+		window.onload = userJoinsChat();
+		// whiteboard functions
+		width = document.getElementById("whiteboard").offsetWidth;
+		height = document.getElementById("whiteboard").offsetHeight;
+		canvas = new fabric.Canvas("whiteboard" , {isDrawingMode: true});
+		canvas.setWidth(width);
+		canvas.setHeight(height);
+		canvas.freeDrawingBrush.color = drawingColor.value;		
+		loadWhiteboard();
+		
+		setInterval(loadWhiteboard, 1000);
+		canvas.on('path:created', function(e){	
+			saveWhiteboard();
+
+		});	
+
+		$(window).resize(function() {
+			setSize();
+		}); 
+
+		// chat functions
+
+		$("#nav-bar").click(function() {
+		    if (document.getElementById("nav-bar").innerHTML == "-") {
+		    	minimizeChat();
+		    	document.getElementById("nav-bar").innerHTML = "+";
+		    }
+		    else {
+		    	maximizeChat();
+		    	document.getElementById("nav-bar").innerHTML = "-";
+		    }
+		});
+
+		setInterval(loadLog, 300);
+
+		$("#message-box").keyup(function(event){
+			if(event.keyCode == 13){
+				var message = document.getElementById("message-box").value;
+				$.post("Php/postchatlog.php", {username : username, text : message, sessionID : sessionID});
+				$('#message-box').val("", "");
+
+			}
+		});
+
+	})
+	var drawingModeEL = document.getElementById("drawingMode"),
+		clearEL = document.getElementById("clear"),
+		drawingLineWidthEL = document.getElementById("drawingLineWidth"),
+		drawingColorEL = document.getElementById("drawingColor");
+
+	clearEL.onclick = function() { 
+		canvas.clear();
+		saveWhiteboard();
+	}
+	
+	drawingModeEL.onclick = function() {
+		canvas.isDrawingMode = !canvas.isDrawingMode;
+		if(canvas.isDrawingMode){
+			drawingModeEL.innerHTML = "Cancel drawing mode";
+		}
+		else {
+			drawingModeEL.innerHTML = "Enter drawing mode";
+		}};
+	
+	document.getElementById('drawingModeSelector').onchange = function() {
+		if(this.value === ""){
+			<!--here we can make custom brushes-->
+		}	
+		else {
+			canvas.freeDrawingBrush = new fabric[this.value + 'Brush'](canvas);
+		}
+		
+		canvas.freeDrawingBrush.color = drawingColor.value;
+		canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEL.value,10) || 1;
+	}
+	
+	drawingLineWidthEL.onchange = function(){
+		canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
+		this.previousSibling.innerHTML= this.value;
+	}
+
+	drawingColor.onchange = function() {
+		canvas.freeDrawingBrush.color = this.value;
+	}
+
 </script>
 
 </body>

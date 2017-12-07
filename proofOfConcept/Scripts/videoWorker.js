@@ -3,6 +3,7 @@ This code is from https://github.com/Computician/WebSocketWebRTCRecorders/tree/m
 **/
 
 var ws;
+var image;
 
 function dataURItoView(dataURI) {
   // convert base64 to raw binary data held in a string
@@ -31,12 +32,18 @@ this.onmessage = function (e) {
 };
 
 
+
+
 function init(config) {
   console.log("trying to connect")
   ws = new WebSocket(config.uri);
   ws.onopen = function() {
        console.log('Connected.')
+       ws.send(config.data)
    };
+  ws.onmessage =  function (event) {
+    postMessage(event.data);
+  }
 }
 
 function record(uri) {
