@@ -117,8 +117,9 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 				#r = requests.post("localhost:5000/JoinSession", data={'id': message.split(",")[1]})
 			else:
 				sessionVar.addStudent(self)
-				writer = cv.VideoWriter("S"+str(sessionID) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
-				sessionVar.addStudentWriter(writer)
+				if sessionVar.studentWriter == None:
+					writer = cv.VideoWriter("S"+str(sessionID) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
+					sessionVar.addStudentWriter(writer)
 		else:
 			print message
 
