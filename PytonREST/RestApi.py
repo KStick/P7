@@ -113,36 +113,6 @@ def seedData():
 	cur.close()
 	conn.close()
 
-
-
-@app.route('/getquestion/<int:id>')
-def getQuestion(id):
-	conn = connect()
-	cur = conn.cursor()
-	query = "SELECT * FROM questions WHERE id = " + str(id) + ";"
-	cur.execute(query)
-	question = cur.fetchone()
-	query = "SELECT username FROM users WHERE id = " + str(question[1]) + ";"
-	cur.execute(query)
-	username = cur.fetchone() [0]
-	returnData = []
-	returnData.append(question[0])
-	returnData.append(username)
-	returnData.append(question[2])
-	returnData.append(question[3])
-	returnData.append(question[4])
-	conn.commit()
-	cur.close()
-	conn.close()
-	return str(returnData)
-
-#Work in progress
-#def getQuestion(id):
-#	conn = connect()
-#	cur = conn.cursor()
-#	query = """ SELECT questions.username,questions.question,questions.date_time,questions.count
-#				FROM"""
-
 @app.route('/Questions', methods = ['GET', 'POST'])
 def Questions():
 	data = request.form
@@ -249,10 +219,8 @@ def validateLogin():
 	username = data['username']
 	password = data['HashedPassword']
 
-	print 0
 	conn = connect()
 	cur = conn.cursor()
-	print 1
 	query = "SELECT role,password FROM users NATURAL JOIN user_roles WHERE users.username ='" + str(username) + "';"
 	cur.execute(query)
 	result = cur.fetchone();
@@ -260,9 +228,7 @@ def validateLogin():
 	cur.close()
 	conn.close()
 	databasePassword = result[1]
-	print 2
 	salt = GetSalt()
-	print 3
 	inputPassword = bcrypt.hashpw(bytes(password),bytes(salt))
 
 	#print databasePassword==inputPassword
@@ -285,19 +251,21 @@ def CreateUser():
 	salt = data['salt']
 	try:
 		password = bcrypt.hashpw(bytes(password),bytes(salt))
-
-		conn = connect()
-		cur = conn.cursor()
-		query = "INSERT INTO users(username, password, email, salt) " + "VALUES ('" + str(username) + "','" + str(password) + "','" + str(email) + "','" + str(salt) + "');"
-		cur.execute(query)
-		conn.commit()
-		query = "INSERT INTO user_roles(username, role) " + "VALUES ('" + str(username) +"','" + str(role) + "') RETURNING role;"
-		cur.execute(query)
-		conn.commit()
-		assigned_role = cur.fetchone()[0]
-		cur.close()
-		conn.close()
-		return str(assigned_role)
+		if password != None:
+			conn = connect()
+			cur = conn.cursor()
+			query = "INSERT INTO users(username, password, email, salt) VALUES ('" + str(username) + "','" + str(password) + "','" + str(email) + "','" + str(salt) + "');"
+			cur.execute(query)
+			conn.commit()
+			query = "INSERT INTO user_roles(username, role) VALUES ('" + str(username) +"','" + str(role) + "') RETURNING role;"
+			cur.execute(query)
+			conn.commit()
+			assigned_role = cur.fetchone()[0]
+			cur.close()
+			conn.close()
+			return str(assigned_role)
+		else:
+			return "Login error"
 	except psycopg2.Error as e:
 		print e
 		return('username_taken')
