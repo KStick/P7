@@ -3,13 +3,14 @@
 	<link rel="stylesheet" type="text/css" href="loginPageCSS.css">
     <link rel="stylesheet" type="text/css" href="globalCSS.css">
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script> 
+    <script src="Scripts/sjcl.js"></script>
 </head>
 
 
 <html>
 <body>
-  	<div class = "main-body">
-		<div class = "top-banner">
+    <div class = "main-body">
+        <div class = "top-banner">
             
         </div>
         <div class = "login-form">
@@ -35,41 +36,70 @@
                 </form>
             </div>
         </div>
-	</div>
+    </div>
 </body>
 </html>
+
 
 <script type="text/javascript">
     function createUser(username, password, repeat_password, email, role){
         if (password == repeat_password) {
-            $.ajax({data:{username, password, email, role},
+            //var bitArray = sjcl.hash.sha256.hash(password);
+            $.ajax({data:{username},
                 type:"POST",
-                url:'http://localhost:5000/CreateUser',
+                url:'http://localhost:5000/GenerateSalt',
                 headers: {
                     'Access-Control-Allow-Origin': '*'
                 },
                 success: function(response) {
-                    if (response=="tutor") {
-                        document.cookie="Username = " + username + ";path=/" 
-                        window.location.href = "./subject/tutor_queue.html"
-                    }
-                    else if (response=="student") {
-                        document.cookie="Username = " + username + ";path=/" 
-                        window.location.href = "./subject/student_subject.html"
-                    }
-                    else if(response=="username_taken"){
-                        alert('Username is taken');
-                    }
-                    console.log(response);
-    
+                    //var derivedKey = sjcl.misc.pbkdf2(password, response, 1000, 256);
+                    //var key = sjcl.codec.base64.fromBits(derivedKey);
+                    var salt = response
+                    var bitArray = sjcl.hash.sha256.hash(salt + password)
+                    var key = sjcl.codec.base64.fromBits(bitArray)
+                    //console.log(salt);
+                    //console.log(key);
+                    $.ajax({data:{username, key, email, role, salt},
+
+                    type:"POST",
+                    url:'http://localhost:5000/CreateUser',
+                    headers: {
+                    'Access-Control-Allow-Origin': '*'
                 },
-                error: function(error){
+                    success: function(response) {
+                        //console.log("Register key : " + key)
+                        if (response=="tutor") {
+                            document.cookie="Username = " + username + ";path=/" 
+                            window.location.href = "./subject/tutor_queue.html"
+                        }
+                        else if (response=="student") {
+                            document.cookie="Username = " + username + ";path=/" 
+                            window.location.href = "./subject/student_subject.html"
+                        }
+                        else if(response=="username_taken"){
+                            alert('Username is taken');
+                        }
+                        //console.log(response);
+    
+                    },
+                    error: function(error){
                     console.log(error);
                 }
-            })    
+            }) 
+
+                },
+                error: function(error){
+                    console.log(error)
+                }
+            })
+
+            //var digest_sha256 = sjcl.codec.hex.fromBits(bitArray);   
         }
         else{
             alert('Passwords did not match!');
         }
     }
 </script>
+
+
+
