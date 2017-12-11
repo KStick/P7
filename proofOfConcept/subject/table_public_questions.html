@@ -4,7 +4,13 @@
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="../globalCSS.css">
 	<meta http-equiv="refresh" content="10">
+  <!--
+        ServerURL change to contact another server
+    -->
+    <input type="hidden" id="serverCWD" value="http://localhost/P7/proofOfConcept"></input>
+    <input type="hidden" id="REST" value="http://localhost:5000"></input>
 </head>
+
 <body>
 	<table id="myTable">
 		<thead>
@@ -20,11 +26,14 @@
 </body>
 
 <script type="text/javascript">
+  serverCWD = document.getElementById("serverCWD").value.toString();
+  REST = document.getElementById("REST").value.toString();
+
 	$(document).ready(function() {     
         $.ajax({
           data: {access : 'public', submit : 'no'},
           type: 'POST',
-          url: 'http://localhost:5000/Questions',
+          url: REST + '/Questions',
           cache: false,
           success: function(text){         
           var stringsplit = text.split(",");
@@ -63,7 +72,7 @@
   $.ajax({
     data:{id : sessionID},
     type:"POST",
-    url:'http://localhost:5000/JoinSession',
+    url:REST + '/JoinSession',
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
