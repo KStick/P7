@@ -1,6 +1,18 @@
 body {
 	margin: 0;
-    background-color: 645C84;
+    background-color: #645C84;
+}
+
+.background-colour-light {
+    background-color: #837D9B;
+}
+
+.background-colour-dark {
+    background-color: #645C84;
+}
+
+.background-colour-banner{
+    background-color: #BFBD7E;
 }
 
 div {
@@ -37,7 +49,6 @@ th, td {
     padding: 8px;
     cursor: pointer;
     width: 30%;
-
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: break-word;
@@ -69,6 +80,14 @@ thead, tbody tr{
     position: relative;
     text-align: center;
     height: 9%;
-    background-color: BFBD7E;
     margin-bottom: 1%;
+    background-color: #BFBD7E;
+}
+
+.login-link{
+    position: absolute;
+    top: 25%;
+    right: 0;
+    height: 50%;
+    padding-right: 8px;
 }

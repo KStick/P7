@@ -13,3 +13,9 @@
     top: 10%;
     bottom: 5%;
 }
+
+.include-public{
+    position: absolute;
+    bottom: 5px;
+    
+}
