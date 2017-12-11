@@ -1,0 +1,15 @@
+.left-container{
+    position: absolute;
+    left: 15%;
+    right: 51%;
+    top: 10%;
+    bottom: 5%;
+}
+
+.right-container{
+    position: absolute;
+    right: 15%;
+    left: 51%;
+    top: 10%;
+    bottom: 5%;
+}
