@@ -4,6 +4,11 @@
     <link rel="stylesheet" type="text/css" href="globalCSS.css">
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script> 
     <script src="Scripts/sjcl.js"></script>
+    <!--
+        ServerURL change to contact another server
+    -->
+    <input type="hidden" id="serverCWD" value="http://localhost/P7/proofOfConcept"></input>
+    <input type="hidden" id="REST" value="http://localhost:5000"></input>
 </head>
 
 
@@ -37,13 +42,16 @@
 </html>
 
 <script type="text/javascript">
+    serverCWD = document.getElementById("serverCWD").value.toString();
+    REST = document.getElementById("REST").value.toString();
+
     function validateLogin(username, password){
         var inputPassword = password;
         //window.location.replace("example.com");
         console.log(username);
          $.ajax({data:{username},
                 type:"POST",
-                url:'http://localhost:5000/GetSalt',
+                url: REST + '/GetSalt',
                 headers: {
                     'Access-Control-Allow-Origin': '*'
                 },
@@ -55,18 +63,18 @@
                     var HashedPassword = sjcl.codec.base64.fromBits(bitArray)
                     $.ajax({data:{username, HashedPassword},
                             type:"POST",
-                            url:'http://localhost:5000/validateLogin',
+                            url:REST + '/validateLogin',
                             headers: {
                                 'Access-Control-Allow-Origin': '*'
                             },
                             success: function(response) {
                                 if (response=="tutor") {
                                     document.cookie="Username = " + username + ";path=/" 
-                                    window.location.href = "./subject/tutor_queue.html"
+                                    window.location.href = serverCWD + "/subject/tutor_queue.html"
                                 }
                                 else if (response=="student") {
                                     document.cookie="Username = " + username + ";path=/" 
-                                    window.location.href = "./subject/student_subject.html"
+                                    window.location.href = serverCWD + "/subject/student_subject.html"
                                 }
                                 else{
                                     alert("Username or password incorrect!");

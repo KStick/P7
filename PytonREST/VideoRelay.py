@@ -61,20 +61,20 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 			if sessionVar != None:
 				if role == "tutor":
 					start = time.time()
-					fh = open(os.getcwd() + "/T" + sessionVar.sessionID + ".jpeg", "wb")
+					fh = open(os.getcwd() + "/Videos/T" + sessionVar.sessionID + ".jpeg", "wb")
 					fh.write(message.split(",")[1].decode("base64"))
 					fh.close()
-					img = cv.imread(os.getcwd() + "/T" + sessionVar.sessionID + ".jpeg")
+					img = cv.imread(os.getcwd() + "/Videos/T" + sessionVar.sessionID + ".jpeg")
 					sessionVar.tutorWriter.write(img)
 					for student in sessionVar.students:
 						student.write_message(message)
 					print "frame sent and saved in " + str(time.time() - start) + " sec"
 				elif len(sessionVar.students) == 1:
 						start = time.time()
-						fh = open(os.getcwd() + "/S" + sessionVar.sessionID + ".jpeg", "wb")
+						fh = open(os.getcwd() + "/Videos/S" + sessionVar.sessionID + ".jpeg", "wb")
 						fh.write(message.split(",")[1].decode("base64"))
 						fh.close()
-						img = cv.imread(os.getcwd() + "/S" + sessionVar.sessionID + ".jpeg")
+						img = cv.imread(os.getcwd() + "/Videos/S" + sessionVar.sessionID + ".jpeg")
 						sessionVar.studentWriter.write(img)
 						if sessionVar.tutor != None:
 							sessionVar.tutor.write_message(message)
@@ -93,12 +93,12 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 				print "addtutor"
 				sessionVar = Session(message.split(",")[1])
 				sessionVar.addTutor(self)	
-				writer = cv.VideoWriter("T"+str(message.split(",")[1]) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
+				writer = cv.VideoWriter("./Videos/T"+str(message.split(",")[1]) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
 				sessionVar.addTutorWriter(writer)
 				sessionList.append(sessionVar)
 			else:
 				sessionVar.addTutor(self)
-				writer = cv.VideoWriter("T"+str(message.split(",")[1]) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
+				writer = cv.VideoWriter("./Videos/T"+str(message.split(",")[1]) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
 				sessionVar.addTutorWriter(writer)
 			
 		elif message.split(",")[0] == "student":
@@ -111,14 +111,14 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 			if new:
 				session = Session(sessionID)
 				session.addStudent(self)	
-				writer = cv.VideoWriter("S"+str(sessionID) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
+				writer = cv.VideoWriter("./Videos/S"+str(sessionID) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
 				session.addStudentWriter(writer)
 				sessionList.append(session)
 				#r = requests.post("localhost:5000/JoinSession", data={'id': message.split(",")[1]})
 			else:
 				sessionVar.addStudent(self)
 				if sessionVar.studentWriter == None:
-					writer = cv.VideoWriter("S"+str(sessionID) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
+					writer = cv.VideoWriter("./Videos/S"+str(sessionID) + ".avi", fourcc, fps,(frameW,frameH),isColor)	
 					sessionVar.addStudentWriter(writer)
 		else:
 			print message

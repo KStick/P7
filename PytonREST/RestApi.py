@@ -16,7 +16,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
@@ -306,3 +306,8 @@ def GetRole(username):
 	cur.close()
 	conn.close()
 	return role
+
+
+
+if __name__== '__main__':
+	app.run(host="0.0.0.0",threaded=True)
