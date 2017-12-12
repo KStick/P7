@@ -30,7 +30,7 @@ def initdb():
 	
 	try:
 		cur.execute("""CREATE TABLE users( 
-						username TEXT UNIQUE NOT NULL, 
+						username TEXT PRIMARY KEY, 
 						password TEXT NOT NULL, 
 						email TEXT NOT NULL,
 						salt TEXT DEFAULT NULL);
@@ -72,12 +72,10 @@ def initdb():
 		pass
 
 	try:
-		cur.execute("""CREATE TABLE session_history(
-						username TEXT NOT NULL UNIQUE REFERENCES users(username) ON UPDATE CASCADE, 
-						question_id Integer REFERENCES questions(question_id));
+		cur.execute("""CREATE TABLE session_history(username TEXT NOT NULL REFERENCES users(username) ON UPDATE CASCADE, question_id Integer REFERENCES questions(question_id));
 					""")
 	except Exception as e:
-		print "Session_history error : "
+		print "Session_history error : " + str(e)
 		pass
 
 	try:
@@ -87,7 +85,7 @@ def initdb():
 			""")
 	except Exception as e:
 		print "Tutor table error"
-		pass	
+		pass
 	conn.commit()
 	cur.close()
 	conn.close()
@@ -306,3 +304,66 @@ def GetRole(username):
 	cur.close()
 	conn.close()
 	return role
+
+
+#Adds the user and the sessionID to the session_history table.
+@app.route('/AddSessionHistory', methods = ['POST'])
+def AddSessionHistory():
+	data = request.form
+	username = data['username']
+	sessionID = data['question_id']
+	conn = connect()
+	cur = conn.cursor()
+	query = "INSERT INTO session_history(username, question_id) VALUES ('" + str(username) + "', '" + str(sessionID) + "');"
+	cur.execute(query)
+	conn.commit()
+	cur.close()
+	conn.close()
+	return ""
+
+#Returns every ID of the sessions that the user has been a part of. Return string is comma seperated.
+@app.route('/GetSessionHistory/<string:username>')
+def GetSessionHistory(username):
+	conn = connect()
+	cur = conn.cursor()
+	query = "SELECT question_id FROM session_history WHERE username = '" + str(username) + "';"
+	cur.execute(query)
+	sessionIDs = cur.fetchall()
+	conn.commit()
+	cur.close()
+	conn.close()
+	returnids = ""
+	for id in sessionIDs:
+		returnids += str(id[0]) + ","
+	return returnids[:-1]
+
+# Checks if a single sessionID is public or private.
+@app.route('/CheckSessionID/<string:sessionID>')
+def CheckSessionID(sessionID):
+	conn = connect()
+	cur = conn.cursor()
+	query = "SELECT public FROM questions WHERE question_id = '" + str(sessionID) + "';"
+	cur.execute(query)
+	isPublic = cur.fetchone()[0]
+	conn.commit()
+	cur.close()
+	conn.close()
+	return isPublic
+
+#Checks if multiple sessionIDs are public or private. Input string with sessionIds has to be comma seperated.
+@app.route('/CheckSessionIDs/<string:sessionIDs>')
+def CheckSessionIDs(sessionIDs):
+	sessionIDs = sessionIDs.split(',')
+	print sessionIDs
+	conn = connect()
+	cur = conn.cursor()
+	isIdPublic = ""
+	for id in sessionIDs:
+		query = "SELECT public FROM questions WHERE question_id = '" + str(id) + "';"
+		cur.execute(query)
+		isIdPublic += str(cur.fetchone()[0]) + ","
+		print (isIdPublic)
+	conn.commit()
+	cur.close()
+	conn.close()
+	return isIdPublic[:-1]

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="globalCSS.css">
+    <link rel="stylesheet" type="text/css" href="session.css">
+	<script src="Scripts/fabric.js"></script>
+	<script src="Scripts/videoWorker.js" type="text/javascript"></script>
+	<script src="Scripts/WSVideoStream.js" type="text/javascript"></script>
+	<title>profile</title>
+</head>
+<body>
+	<script type="text/javascript">
+		var loc = window.location.pathname;
+		console.log(loc);
+	
+	    function GetSessionHistory(username) {
+	    	var sessionIDs; 	
+        $.ajax({
+        	async: false,
+            url: 'http://localhost:5000/GetSessionHistory/' + username,
+            cache: false,
+            success: function(response) {
+            	sessionIDs = response;
+
+            },
+            error: function(error) {
+                console.log(error);
+            } 
+        })
+        console.log(sessionIDs);
+        return sessionIDs;
+    }
+
+
+    function CheckIsPublic(sessionIDs) {
+    	var isIdsPublic;
+    	$.ajax({
+    		async: false,
+    		url: 'http://localhost:5000/CheckSessionIDs/' + sessionIDs,
+    		cache: false,
+    		success: function(response) {
+    			console.log(response);
+    			isIdsPublic = response.split(',');
+    		},
+    		error: function(error) {
+    			console.log(error);
+    		} 
+    	})
+    	console.log(isIdsPublic);
+    	return isIdsPublic;
+    }
+
+
+    function test() {
+    	var sessionIDs = GetSessionHistory("henry");
+    	var isIdsPublic = CheckIsPublic(sessionIDs, "henry");
+    	var sessionIDsPublic = "";
+    	var sessionIDsPrivate = "";
+    	sessionIDs = sessionIDs.split(',');
+    	console.log()
+    	for (var i = 0; i < sessionIDs.length; i++) {
+    		if (isIdsPublic[i] == 'True') {
+    			sessionIDsPublic += sessionIDs[i] + ',';
+    		}
+    		else {
+    			sessionIDsPrivate += sessionIDs[i] + ',';
+    		}
+    	}
+    	console.log("Public ID: " + sessionIDsPublic);
+    	console.log("Private ID: " + sessionIDsPrivate);
+    }
+
+	</script>
+	<form method="get" action="/P7/PytonREST/S6.avi">
+		<button type="submit">Download!</button>
+	</form>
+	<button onclick="test()">Click me for uber results</button>
+	<p id="getRequest"></p>
+</body>
+</html>
