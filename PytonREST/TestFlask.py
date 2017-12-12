@@ -27,18 +27,18 @@ def startTest():
 
 
 def createUser(username, password, email, role):
-	response = requests.post("http://localhost:5000/GenerateSalt", data={'username':username})
+	response = requests.post("http://172.17.213.75:5000/GenerateSalt", data={'username':username})
 	salt = response.text
-	role = requests.post("http://localhost:5000/CreateUser", data={'username':username, 'key':password, 'email':email, 'role':role, 'salt':salt})
+	role = requests.post("http://172.17.213.75:5000/CreateUser", data={'username':username, 'key':password, 'email':email, 'role':role, 'salt':salt})
 
 def login(username, password):
-	role = requests.post("http://localhost:5000/validateLogin", data={'username':username, 'HashedPassword':password})
+	role = requests.post("http://172.17.213.75:5000/validateLogin", data={'username':username, 'HashedPassword':password})
 
 def createQuestion(username, subject, question, access):
-	id = requests.post("http://localhost:5000/Questions", data={'submit':'yes', 'username':username, 'subject':subject, 'question':question, 'access':access})
+	id = requests.post("http://172.17.213.75:5000/Questions", data={'submit':'yes', 'username':username, 'subject':subject, 'question':question, 'access':access})
 
 def getPrivateQuestions():
-	res = requests.get('http://localhost:5000/Questions', data ={'submit':'no', 'access':'private'})
+	res = requests.get('http://172.17.213.75:5000/Questions', data ={'submit':'no', 'access':'private'})
 	
 def spawnProcesses(num):
     pool = Pool(processes=num)              # start 4 worker processes
@@ -46,19 +46,12 @@ def spawnProcesses(num):
     multiple_results = [pool.apply_async(startTest, ()) for i in range(num)]
     [res.get(timeout=360) for res in multiple_results]
 
-
-
-exitFlag = True
-
 class myThread (threading.Thread):
 	def __init__(self):
 		threading.Thread.__init__(self)
-		self.time = []
 	def run(self):
-		while exitFlag:
-			start = time.time()
+		for i in range(0, 3):
 			startTest()
-			self.time.append(time.time() - start)
 
 if __name__ == '__main__':
 	threads = []
@@ -67,23 +60,12 @@ if __name__ == '__main__':
 	start = time.time()
 
 	# Create new threads
-	for i in range(0,20):
+	for i in range(0,100):
 		thread = myThread()
 		thread.start()
 		threads.append(thread)
-	while True:
-		if time.time() - start >= 3 :
-			exitFlag = False
-			print "##################################################"
-			print "Kenneth exit"
-			print "##################################################"
-			break
 
 	# Wait for all threads to complete
-	count = 0
 	for t in threads:
-		count+=1
-		print len(t.time)
 		t.join()
 	print "Exiting Main Thread"
-	print count
