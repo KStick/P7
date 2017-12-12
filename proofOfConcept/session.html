@@ -6,6 +6,12 @@
 	<script src="Scripts/fabric.js"></script>
 	<script src="Scripts/videoWorker.js" type="text/javascript"></script>
 	<script src="Scripts/WSVideoStream.js" type="text/javascript"></script>
+	<!--
+        ServerURL change to contact another server
+    -->
+    <input type="hidden" id="REST" value="http://localhost:5000"></input>
+    <input type="hidden" id="serverCWD" value="http://localhost/P7/proofOfConcept"></input>
+
 </head>
 
 
@@ -59,6 +65,8 @@
 	</div>
 	
 <script type="text/javascript">
+	serverCWD = document.getElementById("serverCWD").value.toString();
+	REST = document.getElementById("REST").value.toString();
 	function deleteSessionCookie() {
 		document.cookie = "SessionID " + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 	}
@@ -78,13 +86,13 @@
 	function saveWhiteboard() {
 		var ID = getCookie("SessionID");
 		var tmp = JSON.stringify(canvas.toJSON());
-		$.post("Php/Post.php", {sessionID : ID, data : tmp});
+		$.post(serverCWD + "/Php/Post.php", {sessionID : ID, data : tmp});
 	}
 
 	function loadWhiteboard() {
 		var ID = getCookie("SessionID");
 		$(function(){
-   			$.get( "Sessions/".concat(ID), function( data ) {
+   			$.get( serverCWD + "/Sessions/".concat(ID), function( data ) {
 					canvas.loadFromJSON(decodeEntities(data), function() {
    			 		canvas.renderAll();
 				}); 
@@ -115,7 +123,7 @@
 	 function loadLog(){
         var sessionID = getCookie("SessionID");
         var oldScrollHeight = $("#box")[0].scrollHeight;
-        var path = "SessionsChatlogs/" + sessionID + ".html";
+        var path = serverCWD + "/SessionsChatlogs/" + sessionID + ".html";
         $.ajax({
             url: path,
             cache: false,
@@ -133,12 +141,12 @@
     }	
 	function userJoinsChat() {
 		var clientmsg = username + " has joined the chat!";
-		$.post("Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
+		$.post(serverCWD + "/Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
 
 	function userLeavesChat() {
 		var clientmsg = username + " has left the chat!";
-		$.post("Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
+		$.post(serverCWD + "/Php/postchatlog.php", {username : "System", text : clientmsg, sessionID : sessionID});
 	}
 
 	function minimizeChat() {
@@ -172,7 +180,7 @@
 
 
  		$.ajax({
-            url: "http://localhost:5000/GetRole/" + username,
+            url: REST + "/GetRole/" + username,
             cache: false,
             success: function(response){
             	console.log(response)
@@ -233,7 +241,7 @@
 		$("#message-box").keyup(function(event){
 			if(event.keyCode == 13){
 				var message = document.getElementById("message-box").value;
-				$.post("Php/postchatlog.php", {username : username, text : message, sessionID : sessionID});
+				$.post(serverCWD + "/Php/postchatlog.php", {username : username, text : message, sessionID : sessionID});
 				$('#message-box').val("", "");
 
 			}

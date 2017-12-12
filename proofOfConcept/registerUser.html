@@ -4,6 +4,12 @@
     <link rel="stylesheet" type="text/css" href="globalCSS.css">
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script> 
     <script src="Scripts/sjcl.js"></script>
+    <!--
+        ServerURL change to contact another server
+    -->
+    <input type="hidden" id="serverCWD" value="http://localhost/P7/proofOfConcept"></input>
+    <input type="hidden" id="REST" value="http://localhost:5000"></input>
+
 </head>
 
 
@@ -42,44 +48,42 @@
 
 
 <script type="text/javascript">
+    serverCWD = document.getElementById("serverCWD").value.toString();
+    REST = document.getElementById("REST").value.toString();
+
     function createUser(username, password, repeat_password, email, role){
         if (password == repeat_password) {
-            //var bitArray = sjcl.hash.sha256.hash(password);
+            var url = REST + '/GenerateSalt';
             $.ajax({data:{username},
                 type:"POST",
-                url:'http://localhost:5000/GenerateSalt',
+                url: url,
                 headers: {
                     'Access-Control-Allow-Origin': '*'
                 },
                 success: function(response) {
-                    //var derivedKey = sjcl.misc.pbkdf2(password, response, 1000, 256);
-                    //var key = sjcl.codec.base64.fromBits(derivedKey);
+                    url = REST + "/CreateUser"
                     var salt = response
                     var bitArray = sjcl.hash.sha256.hash(salt + password)
                     var key = sjcl.codec.base64.fromBits(bitArray)
-                    //console.log(salt);
-                    //console.log(key);
                     $.ajax({data:{username, key, email, role, salt},
 
                     type:"POST",
-                    url:'http://localhost:5000/CreateUser',
+                    url: url,
                     headers: {
                     'Access-Control-Allow-Origin': '*'
                 },
                     success: function(response) {
-                        //console.log("Register key : " + key)
                         if (response=="tutor") {
                             document.cookie="Username = " + username + ";path=/" 
-                            window.location.href = "./subject/tutor_queue.html"
+                            window.location.href = serverCWD + "/subject/tutor_queue.html"
                         }
                         else if (response=="student") {
                             document.cookie="Username = " + username + ";path=/" 
-                            window.location.href = "./subject/student_subject.html"
+                            window.location.href = serverCWD + "/subject/student_subject.html"
                         }
                         else if(response=="username_taken"){
                             alert('Username is taken');
                         }
-                        //console.log(response);
     
                     },
                     error: function(error){
@@ -92,8 +96,6 @@
                     console.log(error)
                 }
             })
-
-            //var digest_sha256 = sjcl.codec.hex.fromBits(bitArray);   
         }
         else{
             alert('Passwords did not match!');

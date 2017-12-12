@@ -305,7 +305,6 @@ def GetRole(username):
 	conn.close()
 	return role
 
-
 #Adds the user and the sessionID to the session_history table.
 @app.route('/AddSessionHistory', methods = ['POST'])
 def AddSessionHistory():
@@ -367,3 +366,7 @@ def CheckSessionIDs(sessionIDs):
 	cur.close()
 	conn.close()
 	return isIdPublic[:-1]
+
+if __name__== '__main__':
+	app.run(host="0.0.0.0",threaded=True)
+

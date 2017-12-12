@@ -3,6 +3,11 @@
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="../mockupCSS.css">
     <link rel="stylesheet" type="text/css" href="../globalCSS.css">
+    <!--
+        ServerURL change to contact another server
+    -->
+    <input type="hidden" id="serverCWD" value="http://localhost/P7/proofOfConcept"></input>
+    <input type="hidden" id="REST" value="http://localhost:5000"></input>
 </head>
 
 
@@ -51,13 +56,16 @@
 	</div>
 
 <script>
+    serverCWD = document.getElementById("serverCWD").value.toString();
+    REST = document.getElementById("REST").value.toString();
+
     document.getElementById('cookie_name').textContent = getCookie('Username');
 
         function validateSubmit(subject, question, access){
             $.ajax({
                 data:{username : getCookie("Username"), subject : subject, question : question, access : access, submit : 'yes'},
                 type:"POST",
-                url:'http://localhost:5000/Questions',
+                url: REST + '/Questions',
                 headers: {
                     'Access-Control-Allow-Origin': '*'
                 },
@@ -65,7 +73,7 @@
                     console.log("hallo");
                     AddSessionHistory(getCookie("Username"), response);
                     document.cookie="SessionID = " + response + ";path=/";
-                    window.open("../session.html");
+                    window.open(serverCWD + "/session.html");
     
                 },
                 error: function(error){
@@ -82,7 +90,7 @@
 
     function logOut(){
         document.cookie = "Username=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/";
-        window.location.href = "../";
+        window.location.href = serverCWD;
     }
 
     function AddSessionHistory(username, sessionID) {
