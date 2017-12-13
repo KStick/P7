@@ -10,8 +10,8 @@ import string
 import Queue
 
 def startTest():
-	username = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(19))
-	password = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(19))
+	username = 'henry' #''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(19))
+	password = 'vipio5Uh0QavpawNVXk80kgH5sfFZNf1m2m1jAAV9z0=' #''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(19))'
 	email = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(8)) + "@hotmail.com"
 	role = random.choice(['student', 'tutor'])
 	subject = random.choice(['Math', 'Biology'])
@@ -19,9 +19,10 @@ def startTest():
 	access = random.choice(['public', 'private'])
 
 
-	createUser(username, password,email,role)
-	login(username, password)
-	createQuestion(username, subject, question, access)
+	#createUser(username, password,email,role)
+	
+	#login(username, password)
+	#createQuestion(username, subject, question, access)
 
 	getPrivateQuestions()
 
@@ -50,7 +51,7 @@ class myThread (threading.Thread):
 	def __init__(self):
 		threading.Thread.__init__(self)
 	def run(self):
-		for i in range(0, 3):
+		for i in range(0, 1):
 			startTest()
 
 if __name__ == '__main__':
