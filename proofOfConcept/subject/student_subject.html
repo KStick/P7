@@ -70,7 +70,6 @@
                     'Access-Control-Allow-Origin': '*'
                 },
                 success: function(response) {
-                    console.log("hallo");
                     AddSessionHistory(getCookie("Username"), response);
                     document.cookie="SessionID = " + response + ";path=/";
                     window.open(serverCWD + "/session.html");

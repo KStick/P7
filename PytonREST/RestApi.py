@@ -81,7 +81,7 @@ def initdb():
 	try:
 		cur.execute("""CREATE TABLE tutor_subject(
 			username TEXT NOT NULL REFERENCES users(username),
-			subject TEXT NOT NULL); 
+			ject TEXT NOT NULL); 
 			""")
 	except Exception as e:
 		print "Tutor table error"
@@ -353,7 +353,6 @@ def CheckSessionID(sessionID):
 @app.route('/CheckSessionIDs/<string:sessionIDs>')
 def CheckSessionIDs(sessionIDs):
 	sessionIDs = sessionIDs.split(',')
-	print sessionIDs
 	conn = connect()
 	cur = conn.cursor()
 	isIdPublic = ""
@@ -361,11 +360,25 @@ def CheckSessionIDs(sessionIDs):
 		query = "SELECT public FROM questions WHERE question_id = '" + str(id) + "';"
 		cur.execute(query)
 		isIdPublic += str(cur.fetchone()[0]) + ","
-		print (isIdPublic)
 	conn.commit()
 	cur.close()
 	conn.close()
 	return isIdPublic[:-1]
+
+@app.route('/GetSession/<string:sessionID>')
+def GetSession(sessionID):
+	print sessionID
+	conn = connect()
+	cur = conn.cursor()
+	query = "SELECT subject, question, date_time FROM questions WHERE question_id = '" + str(sessionID) + "';"
+	cur.execute(query)
+	sessionID = cur.fetchone()
+	pattern = r"datetime\.datetime\((\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\)"
+	conn.commit()
+	cur.close()
+	conn.close()
+	return re.sub(pattern=pattern, repl="\\1-\\2-\\3", string=str(sessionID))[1:-1]
+
 
 if __name__== '__main__':
 	app.run(host="0.0.0.0",threaded=True)

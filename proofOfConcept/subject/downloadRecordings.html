@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../globalCSS.css">
+    <link rel="stylesheet" type="text/css" href="../recordingsCSS.css">
+    <script src="subject.js" type="text/javascript"></script>
+        <!--
+        ServerURL change to contact another server
+    -->
+    <input type="hidden" id="REST" value="http://localhost:5000"></input>
+    <input type="hidden" id="serverCWD" value="http://localhost/P7/proofOfConcept"></input>
+
+    <title>Profile</title>
+
+</head>
+<body onload="loadSessions()">
+    <div class = "top-banner">
+        <p class = "top-banner-text"> Profile </p>
+        <p class = "login-link">
+            <button id="logout" class="log-out-button" onclick="logOut()">Log out!</button>
+            Logged in as: <span id="Username">
+            </span><p>
+    </div>
+    
+    <div class = "left-container background-colour-light">
+        <p>Here you can download the chatlog or video stream from public sessions you have participated in.</p>
+        <table id="public-table">
+            <tr id="public-row">
+                <th id="public-headers">Subject</th>
+                <th id="public-headers">Question</th>
+                <th id="public-headers">Date</th>
+                <th id="public-headers">Video</th>
+                <th id="public-headers">Chatlog</th>   
+            </tr>
+        </table>
+        <div class = "include-public">
+            <form action="">
+                <input type="checkbox" name="include-public" value="Public-Yes">Include public sessions you have participated in?
+            </form>
+        </div>
+    </div>
+    
+    <div class = "background-colour-light right-container">
+        <p>Here you can download the chatlog or video stream from private sessions you have participated in.</p>
+        <table id="private-table">
+            <tr id="private-row">
+                <th id="private-headers">Subject</th>
+                <th id="private-headers">Question</th>
+                <th id="private-headers">Date</th>
+                <th id="private-headers">Video</th>
+                <th id="private-headers">Chatlog</th>
+            </tr>
+        </table>
+    </div>
+</body>
+
+
+
+<script type="text/javascript">
+serverCWD = document.getElementById("serverCWD").value.toString();
+REST = document.getElementById("REST").value.toString();
+function GetSessionHistory(username) {
+    var sessionIDs;     
+    $.ajax({
+        async: false,
+        url: REST + '/GetSessionHistory/' + username,
+        cache: false,
+        success: function(response) {
+            sessionIDs = response;
+
+        },
+        error: function(error) {
+            console.log(error);
+        } 
+    })
+    console.log(sessionIDs);
+    return sessionIDs;
+}
+
+
+
+function CheckIsPublic(sessionIDs) {
+    var isIdsPublic;
+    $.ajax({
+        async: false,
+        url: REST + '/CheckSessionIDs/' + sessionIDs,
+        cache: false,
+        success: function(response) {
+            isIdsPublic = response;
+        },
+        error: function(error) {
+            console.log(error);
+        } 
+    })
+    console.log(isIdsPublic);
+    return isIdsPublic;
+}
+    // Gets the subject, question and date from the specificed sessionID. used to populate the tables.
+function GetSession(sessionID) {
+    var sessionInfo;
+    $.ajax({
+        async: false,
+        url: REST + '/GetSession/' + sessionID,
+        cache: false,
+        success: function(response) {
+            sessionInfo = response;
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    })
+    return sessionInfo;
+}
+
+function loadSessions() {
+    var sessionIDs = GetSessionHistory(getCookie("Username"));
+    var isIdsPublic = CheckIsPublic(sessionIDs);
+    var sessionInfo = "";
+    var tableHTML = "";
+    sessionIDs = sessionIDs.split(',');
+    isIdsPublic = isIdsPublic.split(',');
+
+    console.log(sessionIDs);
+    console.log(isIdsPublic);
+
+    GetSession(sessionIDs[0]);
+
+   for (var i = 0; i < sessionIDs.length; i++) {
+        if (isIdsPublic[i] == "True") {
+            sessionInfo = GetSession(sessionIDs[i]);
+            sessionInfo = sessionInfo.split(',');
+            console.log(sessionInfo);
+            tableHTML += "<tr id='public-row'>";
+            for (var y = 0; y < sessionInfo.length; y++) {
+                tableHTML += "<td id='public-row-element'>" + sessionInfo[y] + "</td>";
+            }
+            tableHTML += "<td id='public-row-element'> <form method='get' action='" +  serverCWD + "/../PytonREST/S" + sessionIDs[i] + "'> <button type='submit'>Download!</button></form>  </td>";
+            tableHTML += "<td id='public-row-element'> <form method='get' action='" + serverCWD + "/SessionsChatlogs/" + sessionIDs[i] + ".html" + "'> <button type='submit'>Download!</button></form>  </td>";
+            tableHTML += "</tr>";
+        }
+    }
+        var tempHTML = document.getElementById("public-table").innerHTML.replace("</tbody>", "");
+        tempHTML += tableHTML + "</tbody>";
+
+        document.getElementById("public-table").innerHTML = tempHTML;
+        console.log(tempHTML);
+}
+</script>
+
+</html>
+
+    <form method="get" action="/P7/PytonREST/S6.avi"> <button type="submit">Download!</button></form>
