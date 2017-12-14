@@ -16,7 +16,7 @@ import psycopg2
 
 def connect():
 	try:
-		return psycopg2.connect("dbname='postgres' user='postgres' host ='localhost' password='123'")
+		return psycopg2.connect("dbname='user' user='user' host ='localhost' password='123'")
 	except Exception as e:
 		raise	
 	
@@ -104,9 +104,6 @@ def seedData():
 	cur.execute("""INSERT INTO roles(role) VALUES('toddler');""")
 	cur.execute("""INSERT INTO user_roles(username,role) VALUES('henry','student');""")
 	cur.execute("""INSERT INTO user_roles(username,role) VALUES('Finn','tutor');""")
-	cur.execute("""INSERT INTO tutor_subject(username, subject) VALUES('Finn', 'Mathematics');""")
-	cur.execute("""INSERT INTO tutor_subject(username, subject) VALUES('Finn', 'Software');""")
-	cur.execute("""INSERT INTO tutor_subject(username, subject) VALUES('Finn', 'Biology');""")
 	conn.commit()
 	cur.close()
 	conn.close()

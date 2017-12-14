@@ -27,7 +27,6 @@ function WSVideoStream(mediaStream, wsURL, data, imageHTML) {
   });
 
   function messageHandler(msg) {
-    console.log(msg);
     imageHTML.src = msg.data;
   }
 

@@ -98,7 +98,7 @@ function AddSessionHistory(username, sessionID) {
     $.ajax({
         data:{username : username, question_id : sessionID},
         type:"POST",
-        url: 'http://localhost:5000/AddSessionHistory',
+        url: 'http://172.17.244.136:5000/AddSessionHistory',
         headers: {
             'Access-Control-Allow-Origin' : '*'
         },
