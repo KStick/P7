@@ -24,7 +24,7 @@
     </div>
     
     <div class = "left-container background-colour-light">
-        <p>Here you can download the chatlog or video stream from public sessions you have participated in.</p>
+        <p>Download video stream and chatlog from previous public sessions.</p>
         <table id="public-table">
             <tr id="public-row">
                 <th id="public-headers">Subject</th>
@@ -35,14 +35,11 @@
             </tr>
         </table>
         <div class = "include-public">
-            <form action="">
-                <input type="checkbox" name="include-public" value="Public-Yes">Include public sessions you have participated in?
-            </form>
         </div>
     </div>
     
     <div class = "background-colour-light right-container">
-        <p>Here you can download the chatlog or video stream from private sessions you have participated in.</p>
+        <p>Download video stream and chatlog from previous public sessions.</p>
         <table id="private-table">
             <tr id="private-row">
                 <th id="private-headers">Subject</th>
@@ -130,24 +127,40 @@ function loadSessions() {
         if (isIdsPublic[i] == "True") {
             sessionInfo = GetSession(sessionIDs[i]);
             sessionInfo = sessionInfo.split(',');
-            console.log(sessionInfo);
             tableHTML += "<tr id='public-row'>";
             for (var y = 0; y < sessionInfo.length; y++) {
                 tableHTML += "<td id='public-row-element'>" + sessionInfo[y] + "</td>";
             }
-            tableHTML += "<td id='public-row-element'> <form method='get' action='" +  serverCWD + "/../PytonREST/S" + sessionIDs[i] + "'> <button type='submit'>Download!</button></form>  </td>";
+            tableHTML += "<td id='public-row-element'> <form method='get' action='" +  serverCWD + "/../PytonREST/Videos/S" + sessionIDs[i] + ".avi" + "'> <button type='submit'>Download!</button></form> <form method='get' action='" +  serverCWD + "/../PytonREST/Videos/T" + sessionIDs[i] + ".avi" + "'> <button type='submit'>Download!</button></form></td>";
             tableHTML += "<td id='public-row-element'> <form method='get' action='" + serverCWD + "/SessionsChatlogs/" + sessionIDs[i] + ".html" + "'> <button type='submit'>Download!</button></form>  </td>";
             tableHTML += "</tr>";
         }
     }
-        var tempHTML = document.getElementById("public-table").innerHTML.replace("</tbody>", "");
-        tempHTML += tableHTML + "</tbody>";
+    var tempHTML = document.getElementById("public-table").innerHTML.replace("</tbody>", "");
+    tempHTML += tableHTML + "</tbody>";
 
-        document.getElementById("public-table").innerHTML = tempHTML;
-        console.log(tempHTML);
+    document.getElementById("public-table").innerHTML = tempHTML;
+    tableHTML = "";
+
+    for (var i = 0; i < sessionIDs.length; i++) {
+            if (isIdsPublic[i] == "False") {
+                sessionInfo = GetSession(sessionIDs[i]);
+                sessionInfo = sessionInfo.split(',');
+                tableHTML += "<tr id='private-row'>";
+
+                for (var y = 0; y < sessionInfo.length; y++) {
+                    tableHTML += "<td id='private-row-element'>" + sessionInfo[y] + "</td>";
+                }
+                tableHTML += "<td id='private-row-element'> <form method='get' action='" +  serverCWD + "/../PytonREST/Videos/S" + sessionIDs[i] + ".avi" + "'> <button type='submit'>Download!</button></form> <form method='get' action='" +  serverCWD + "/../PytonREST/Videos/T" + sessionIDs[i] + ".avi" + "'> <button type='submit'>Download!</button></form></td>";
+                tableHTML += "<td id='private-row-element'> <form method='get' action='" + serverCWD + "/SessionsChatlogs/" + sessionIDs[i] + ".html" + "'> <button type='submit'>Download!</button></form>  </td>";
+                tableHTML += "</tr>";
+            }
+        }
+    var tempHTML = document.getElementById("private-table").innerHTML.replace("</tbody>", "");
+    tempHTML += tableHTML + "</tbody>";
+
+    document.getElementById("private-table").innerHTML = tempHTML;    
 }
 </script>
 
 </html>
-
-    <form method="get" action="/P7/PytonREST/S6.avi"> <button type="submit">Download!</button></form>
