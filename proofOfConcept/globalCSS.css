@@ -37,10 +37,14 @@ button {
 
 th:first-child {
     width: 10%;
+    overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 td:first-child {
     width: 10%;
+    overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 th, td {
@@ -53,6 +57,7 @@ th, td {
     word-wrap: break-word;
     word-break: break-word;
     hyphens: auto;
+    word-break: break-all;
 }
 
 table {
